@@ -254,8 +254,11 @@ py_madfile_read(PyObject * self, PyObject * args) {
      */
     if (mad_frame_decode(&MAD_FRAME(self), &MAD_STREAM(self))) {
       if (MAD_RECOVERABLE(MAD_STREAM(self).error)) {
+	/* FIXME: prefer to return an error string to the caller
+	 * rather than print to stderr
 	fprintf(stderr, "mad: recoverable frame level error: %s\n", mad_stream_errorstr(&MAD_STREAM(self)));
 	fflush(stderr);
+	*/
 	/* go onto the next frame */
 	nextframe = 1;
       } else {
