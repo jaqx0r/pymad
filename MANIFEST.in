@@ -1,2 +1,2 @@
-include config_unix.py AUTHORS COPYING README
+include config_unix.py AUTHORS COPYING README ChangeLog
 recursive-include src *.h
