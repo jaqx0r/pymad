@@ -89,7 +89,7 @@ PyTypeObject py_madfile_t = {
 /* functions */
 
 PyObject * py_madfile_new(PyObject * self, PyObject * args) {
-    py_madfile * mf;
+    py_madfile * mf = NULL;
     FILE * file;
     int close_file = 0;
     char * fname;
