@@ -1,0 +1,12 @@
+0.2
+---
+
+* py_madfile_new can now be passed a file object as well as a filename.
+* frame info can be retrieved from the MadFile object
+* Numerous bugfixes (see ChangeLog for details)
+
+0.1
+---
+
+* Initial release.
+  - Can open an mp3 file and decode the stream.
