@@ -7,8 +7,6 @@
  * This program is free software, you may copy and/or modify as per
  * the GNU General Public License (version 2, or at your discretion,
  * any later version).  This is the same license as libmad.
- *
- * OH GOD THE VIRUS IS EATING MY BRAIN
  */
 
 #ifndef __PY_MADFILE_H__
@@ -18,16 +16,16 @@
 #include <mad.h>
 
 typedef struct {
-	PyObject_HEAD
-	FILE * f;
-	int close_file;
-	struct mad_stream stream;
-	struct mad_frame  frame;
-	struct mad_synth  synth;
-	mad_timer_t timer;
-	unsigned char * buffy;
-	unsigned int bufsiz;
-	unsigned int framecount;
+    PyObject_HEAD
+    FILE * f;
+    int close_file;
+    struct mad_stream stream;
+    struct mad_frame  frame;
+    struct mad_synth  synth;
+    mad_timer_t timer;
+    unsigned char * buffy;
+    unsigned int bufsiz;
+    unsigned int framecount;
 } py_madfile; /* MadFile */
 
 #define PY_MADFILE(x) ((py_madfile *) x)
