@@ -376,30 +376,30 @@ py_madfile_read(PyObject * self, PyObject * args) {
   
     Py_BEGIN_ALLOW_THREADS
     
-	/* Synthesised samples must be converted from mad's fixed point
-	 * format to the consumer format.  Here we use signed 16 bit
-	 * big endian ints on two channels.  Integer samples are 
-	 * temporarily stored in a buffer that is flushed when full. */
-	for (i = 0; i < MAD_SYNTH(self).pcm.length; i++) {
-	    signed short sample;
-      
-	    /* left channel */
-	    sample = madfixed_to_short(MAD_SYNTH(self).pcm.samples[0][i]);
-	    *(buffy++) = sample & 0xFF;
-	    *(buffy++) = sample >> 8;
-      
-	    /* right channel. 
-	     * if the decoded stream is monophonic then the right channel
-	     * is the same as the left one */
-	    if (MAD_NCHANNELS(&MAD_FRAME(self).header) == 2)
-		sample = madfixed_to_short(MAD_SYNTH(self).pcm.samples[1][i]);
-	    *(buffy++) = sample & 0xFF;
-	    *(buffy++) = sample >> 8;
-	}
+    /* Synthesised samples must be converted from mad's fixed point
+     * format to the consumer format.  Here we use signed 16 bit
+     * big endian ints on two channels.  Integer samples are 
+     * temporarily stored in a buffer that is flushed when full. */
+    for (i = 0; i < MAD_SYNTH(self).pcm.length; i++) {
+	signed short sample;
+
+	/* left channel */
+	sample = madfixed_to_short(MAD_SYNTH(self).pcm.samples[0][i]);
+	*(buffy++) = sample & 0xFF;
+	*(buffy++) = sample >> 8;
+
+	/* right channel. 
+	 * if the decoded stream is monophonic then the right channel
+	 * is the same as the left one */
+	if (MAD_NCHANNELS(&MAD_FRAME(self).header) == 2)
+	    sample = madfixed_to_short(MAD_SYNTH(self).pcm.samples[1][i]);
+	*(buffy++) = sample & 0xFF;
+	*(buffy++) = sample >> 8;
+    }
   
     Py_END_ALLOW_THREADS
     
-	return pybuf;
+    return pybuf;
 }
 
 /* return the MPEG layer */
