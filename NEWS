@@ -1,6 +1,12 @@
 NEWS for pymad
 ==============
 
+0.5 (01/10/03)
+---
+
+* Now can read from any file-like Python object.
+* Added example program for playing internet radio streams.
+
 0.4.1 (06/02/03)
 -----
 
