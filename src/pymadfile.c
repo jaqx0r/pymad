@@ -45,6 +45,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <Python.h>
 #include <stdio.h>
 #include <stdint.h>
 #include <errno.h>
