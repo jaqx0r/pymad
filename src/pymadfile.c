@@ -101,6 +101,7 @@ PyObject * py_madfile_new(PyObject * self, PyObject * args) {
     int close_file = 0;
     char * fname;
     PyObject *fobject = NULL;
+    PyObject *readmethod = NULL;
     char *initial;
     long ibytes = 0;
     char errmsg[ERROR_MSG_SIZE];
@@ -117,13 +118,20 @@ PyObject * py_madfile_new(PyObject * self, PyObject * args) {
 	    PyObject_DEL(mf);
 	    return NULL;
 	}
-    } else if (PyArg_ParseTuple(args, "O!|sl:MadFile", &PyFile_Type,
+    } else if (PyArg_ParseTuple(args, "O|sl:MadFile",
 				&fobject, &initial, &ibytes)) {
 	/* clear the first failure */
 	PyErr_Clear();
 	file = PyFile_AsFile(fobject);
-	if (file == NULL) 
-	    return NULL;
+	if (file == NULL) {
+            readmethod = PyObject_GetAttrString(fobject, "read");
+            if (!readmethod) {
+		PyErr_Clear();
+                PyErr_SetString(PyExc_TypeError,
+				"argument must have 'read' method");
+                return NULL;
+            }
+        }
     } else
 	return NULL;
 
@@ -132,8 +140,17 @@ PyObject * py_madfile_new(PyObject * self, PyObject * args) {
     if (bufsiz <= 4096) bufsiz = 4096;
   
     mf = PyObject_NEW(py_madfile, &py_madfile_t);
-    mf->f = file;
-    mf->close_file = close_file;
+    if (readmethod) {
+        mf->f = NULL;
+        mf->close_file = 0;
+        mf->fobject = fobject;
+        mf->readmethod = readmethod;
+    } else {
+        mf->f = file;
+        mf->close_file = close_file;
+        mf->fobject = NULL;
+        mf->readmethod = NULL;
+    }
 
     /* initialise the mad structs */
     mad_stream_init(&mf->stream);
@@ -150,7 +167,9 @@ PyObject * py_madfile_new(PyObject * self, PyObject * args) {
      * data immediately available to the caller */
     py_madfile_read((PyObject *) mf, NULL);
 
-    mf->total_length = calc_total_time((PyObject *) mf);
+    /* can only work out total time on real files */
+    if (mf->f)
+        mf->total_length = calc_total_time((PyObject *) mf);
 
     return (PyObject *) mf;
 }
@@ -247,8 +266,8 @@ py_madfile_read(PyObject * self, PyObject * args) {
     int nextframe = 0;
     char errmsg[ERROR_MSG_SIZE];
 
-    /* if we are at EOF, then return None */
-    if (feof(PY_MADFILE(self)->f)) {
+    /* if we're reading a file, and it's at EOF, then return None */
+    if (PY_MADFILE(self)->f && feof(PY_MADFILE(self)->f)) {
 	Py_INCREF(Py_None);
 	return Py_None;
     }
@@ -295,18 +314,42 @@ py_madfile_read(PyObject * self, PyObject * args) {
 		    remaining = 0;
       
 	    /* Fill in the buffer.  If an error occurs, make like a tree */
-	    readsize = fread(readstart, 1, readsize, PY_MADFILE(self)->f);
-	    if (readsize <= 0) {
-		if (ferror(PY_MADFILE(self)->f)) {
-		    snprintf(errmsg, ERROR_MSG_SIZE,
-			     "read error: %s", strerror(errno));
-		    PyErr_SetString(PyExc_IOError, errmsg);
-		    return NULL;
+            if (PY_MADFILE(self)->fobject) {
+                PyObject *args, *retval;
+
+                args = Py_BuildValue("(i)", readsize);
+                retval = PyObject_Call(PY_MADFILE(self)->readmethod, args, NULL);
+                Py_XDECREF(args);
+                if (retval == NULL)
+                    return NULL;
+                if (!PyString_Check(retval)) {
+                    Py_DECREF(retval);
+                    return NULL;
+                }
+                readsize = PyString_GET_SIZE(retval);
+		/* pretend a readsize of 0 is EOF */ 
+                if (readsize == 0) {
+                    Py_DECREF(retval);
+                    Py_INCREF(Py_None);
+                    return Py_None;
+                } else {
+		    memcpy(readstart, PyString_AsString(retval), readsize);
+		    Py_DECREF(retval);
 		}
-		/* again, if we're at EOF, return None */
-		if (feof(PY_MADFILE(self)->f)) {
-		    Py_INCREF(Py_None);
-		    return Py_None;
+	    } else {
+		readsize = fread(readstart, 1, readsize, PY_MADFILE(self)->f);
+		if (readsize <= 0) {
+		    if (ferror(PY_MADFILE(self)->f)) {
+			snprintf(errmsg, ERROR_MSG_SIZE,
+				 "read error: %s", strerror(errno));
+			PyErr_SetString(PyExc_IOError, errmsg);
+			return NULL;
+		    }
+		    /* again, if we're at EOF, return None */
+		    if (feof(PY_MADFILE(self)->f)) {
+			Py_INCREF(Py_None);
+			return Py_None;
+		    }
 		}
 	    }
       

@@ -2,7 +2,7 @@
 
 import sys, os.path, ao
 
-sys.path.insert(0, "build/lib.linux-i686-2.2")
+sys.path.insert(0, "build/lib.linux-ppc-2.3")
 
 print sys.path
 
