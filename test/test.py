@@ -1,6 +1,12 @@
 #!/usr/bin/python
 
-import mad, ao
+import sys, os.path, ao
+
+sys.path.insert(0, "build/lib.linux-i686-2.2")
+
+print sys.path
+
+import mad
 
 def play(file):
     mf = mad.MadFile(file)
@@ -36,17 +42,20 @@ def play(file):
         
     print "bitrate %lu bps" % mf.bitrate()
     print "samplerate %d Hz" % mf.samplerate()
-    
+    millis = mf.total_time()
+    secs = millis / 1000
+    print "total time %d ms (%dm%2ds)" % (millis, secs / 60, secs % 60)
+        
     dev = ao.AudioDevice('oss', bits=16, rate=mf.samplerate())
     while 1:
         buffy = mf.read()
         if buffy is None:
             break
         dev.play(buffy, len(buffy))
-
-import sys, os.path
+        #print "current time: %d ms" % mf.current_time()
 
 if __name__ == "__main__":
+    print "pymad version %s" % mad.__version__
     for file in sys.argv[1:]:
         if os.path.exists(file):
             print "playing %s" % file
