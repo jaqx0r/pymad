@@ -104,12 +104,14 @@ PyObject * py_madfile_new(PyObject * self, PyObject * args) {
 	file = fopen(fname, "r");
 	close_file = 1;
 	if (file == NULL) {
-	    snprintf(errmsg, ERROR_MSG_SIZE, "Couldn't open file: %s", fname);
+	    snprintf(errmsg, ERROR_MSG_SIZE,
+		     "Couldn't open file: %s", fname);
 	    PyErr_SetString(PyExc_IOError, errmsg);
 	    PyObject_DEL(mf);
 	    return NULL;
 	}
-    } else if (PyArg_ParseTuple(args, "O!|sl:MadFile", &PyFile_Type, &fobject, &initial, &ibytes)) {
+    } else if (PyArg_ParseTuple(args, "O!|sl:MadFile", &PyFile_Type,
+				&fobject, &initial, &ibytes)) {
 	/* clear the first failure */
 	PyErr_Clear();
 	file = PyFile_AsFile(fobject);
@@ -233,9 +235,9 @@ py_madfile_read(PyObject * self, PyObject * args) {
 	     *     by it, then that frame's start is pointed to by the
 	     *     next_frame member of the mad_stream structure.  This
 	     *     common situation occurs when mad_frame_decode():
-	     *      - fails,
-	     *      - sets the stream error to MAD_ERROR_BUFLEN, and
-	     *      - sets the next_frame pointer to a non NULL value.
+	     *      1) fails,
+	     *      2) sets the stream error to MAD_ERROR_BUFLEN, and
+	     *      3) sets the next_frame pointer to a non NULL value.
 	     *     (See also the comment marked [2] below)
 	     *
 	     *     When this occurs, the remaining unused bytes must be put
@@ -246,8 +248,10 @@ py_madfile_read(PyObject * self, PyObject * args) {
 	     *     448kbps).
 	     */
 	    if (MAD_STREAM(self).next_frame != NULL) {
-		remaining = MAD_STREAM(self).bufend - MAD_STREAM(self).next_frame;
-		memmove(MAD_BUFFY(self), MAD_STREAM(self).next_frame, remaining);
+		remaining = MAD_STREAM(self).bufend -
+		    MAD_STREAM(self).next_frame;
+		memmove(MAD_BUFFY(self), MAD_STREAM(self).next_frame,
+			remaining);
 		readstart = MAD_BUFFY(self) + remaining;
 		readsize = MAD_BUFSIZ(self) - remaining;
 	    } else
@@ -259,7 +263,8 @@ py_madfile_read(PyObject * self, PyObject * args) {
 	    readsize = fread(readstart, 1, readsize, PY_MADFILE(self)->f);
 	    if (readsize <= 0) {
 		if (ferror(PY_MADFILE(self)->f)) {
-		    snprintf(errmsg, ERROR_MSG_SIZE, "read error: %s", strerror(errno));
+		    snprintf(errmsg, ERROR_MSG_SIZE,
+			     "read error: %s", strerror(errno));
 		    PyErr_SetString(PyExc_IOError, errmsg);
 		    return NULL;
 		}
@@ -309,8 +314,9 @@ py_madfile_read(PyObject * self, PyObject * args) {
 	    if (MAD_RECOVERABLE(MAD_STREAM(self).error)) {
 		/* FIXME: prefer to return an error string to the caller
 		 * rather than print to stderr
-		 fprintf(stderr, "mad: recoverable frame level error: %s\n", mad_stream_errorstr(&MAD_STREAM(self)));
-		 fflush(stderr);
+		fprintf(stderr, "mad: recoverable frame level error: %s\n",
+		        mad_stream_errorstr(&MAD_STREAM(self)));
+		fflush(stderr);
 		*/
 		/* go onto the next frame */
 		nextframe = 1;
@@ -319,7 +325,8 @@ py_madfile_read(PyObject * self, PyObject * args) {
 		    /* not enough data to decode */
 		    nextframe = 1;
 		} else {
-		    snprintf(errmsg, ERROR_MSG_SIZE, "unrecoverable frame level error: %s",
+		    snprintf(errmsg, ERROR_MSG_SIZE,
+			     "unrecoverable frame level error: %s",
 			     mad_stream_errorstr(&MAD_STREAM(self)));
 		    PyErr_SetString(PyExc_RuntimeError, errmsg);
 		    return NULL;
