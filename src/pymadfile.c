@@ -130,6 +130,7 @@ PyObject * py_madfile_new(PyObject * self, PyObject * args) {
     if (bufsiz <= 4096) bufsiz = 4096;
   
     mf = PyObject_NEW(py_madfile, &py_madfile_t);
+    Py_INCREF(fobject);
     mf->fobject = fobject;
     mf->close_file = close_file;
 
