@@ -206,7 +206,7 @@ py_madfile_read(PyObject * self, PyObject * args) {
       readsize = fread(readstart, 1, readsize, PY_MADFILE(self)->f);
       if (readsize <= 0) {
 	if (ferror(PY_MADFILE(self)->f)) {
-	  snprintf(errmsg, 513, "read error: %s", strerror(errno));
+	  snprintf(errmsg, 512, "read error: %s", strerror(errno));
 	  PyErr_SetString(PyExc_IOError, errmsg);
 	  return NULL;
 	}
