@@ -29,7 +29,7 @@ void initmad(void) {
     dict = PyModule_GetDict(module);
 
     PyDict_SetItemString(dict, "__version__",
-			 PyString_FromString(mad_version));
+			 PyString_FromString(VERSION));
 
     /* layer */
     PY_CONST(LAYER_I);
