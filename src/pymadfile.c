@@ -23,6 +23,9 @@
 #define PyObject_DEL(op) PyMem_DEL((op))
 #endif
 
+#define ERROR_MSG_SIZE  512
+#define MAD_BUF_SIZE    4096 /* should be a multiple of 4 >= 4096 */
+
 PyTypeObject py_madfile_t = {
   PyObject_HEAD_INIT(&PyType_Type)
   0,
@@ -60,15 +63,15 @@ PyObject * py_madfile_new(PyObject * self, PyObject * args) {
   PyObject *fobject = NULL;
   char *initial;
   long ibytes = 0;
-  char errmsg[512]; /* FIXME: use MSG_SIZE or something */
-  unsigned long int bufsiz = 4096;
+  char errmsg[ERROR_MSG_SIZE];
+  unsigned long int bufsiz = MAD_BUF_SIZE;
   int n;
   
   if (PyArg_ParseTuple(args, "s|l:MadFile", &fname, &bufsiz)) {
     file = fopen(fname, "r");
     close_file = 1;
     if (file == NULL) {
-      snprintf(errmsg, 512, "Couldn't open file: %s", fname);
+      snprintf(errmsg, ERROR_MSG_SIZE, "Couldn't open file: %s", fname);
       PyErr_SetString(PyExc_IOError, errmsg);
       PyObject_DEL(mf);
       return NULL;
@@ -176,7 +179,7 @@ py_madfile_read(PyObject * self, PyObject * args) {
   char * buffy; /* output buffer */
   unsigned int i, size;
   int nextframe = 0;
-  char errmsg[512];
+  char errmsg[ERROR_MSG_SIZE];
 
   /* if we are at EOF, then return None */
   if (feof(PY_MADFILE(self)->f)) {
@@ -227,7 +230,7 @@ py_madfile_read(PyObject * self, PyObject * args) {
       readsize = fread(readstart, 1, readsize, PY_MADFILE(self)->f);
       if (readsize <= 0) {
 	if (ferror(PY_MADFILE(self)->f)) {
-	  snprintf(errmsg, 512, "read error: %s", strerror(errno));
+	  snprintf(errmsg, ERROR_MSG_SIZE, "read error: %s", strerror(errno));
 	  PyErr_SetString(PyExc_IOError, errmsg);
 	  return NULL;
 	}
@@ -287,7 +290,8 @@ py_madfile_read(PyObject * self, PyObject * args) {
 	  /* not enough data to decode */
 	  nextframe = 1;
 	} else {
-	  snprintf(errmsg, 512, "unrecoverable frame level error: %s", mad_stream_errorstr(&MAD_STREAM(self)));
+	  snprintf(errmsg, ERROR_MSG_SIZE, "unrecoverable frame level error: %s",
+	           mad_stream_errorstr(&MAD_STREAM(self)));
 	  PyErr_SetString(PyExc_RuntimeError, errmsg);
 	  return NULL;
 	}
