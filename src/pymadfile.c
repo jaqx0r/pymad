@@ -19,6 +19,10 @@
 #include "madmodule.h"
 #include "pymadfile.h"
 
+#if PY_VERSION_HEX < 0x01060000
+#define PyObject_DEL(op) PyMem_DEL((op))
+#endif
+
 PyTypeObject py_madfile_t = {
   PyObject_HEAD_INIT(&PyType_Type)
   0,

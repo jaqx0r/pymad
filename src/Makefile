@@ -13,7 +13,7 @@ madmodule.so: $(OBJS)
 	$(CC) -shared $(OBJS) -o $@ -lmad
 
 .c.o:
-	$(CC) -Werror -Wall -pedantic -fPIC $(INC) -o $@ -c $<
+	$(CC) -Werror -Wall -fPIC $(INC) -o $@ -c $<
 
 clean:
 	-rm -f *.o *.so *.pyc *~
