@@ -1,6 +1,11 @@
 NEWS for pymad
 ==============
 
+0.5.1 (07/10/03)
+-----
+
+* Fix segfault when cleaning up.
+
 0.5 (01/10/03)
 ---
 
