@@ -44,16 +44,10 @@ def play(file):
             break
         dev.play(buffy, len(buffy))
 
-import sys
+import sys, os.path
 
 if __name__ == "__main__":
-    if len(sys.argv) == 1:
-        print "playing hardcoded tracks"
-        play("/home/jaq/share/music0/Unfiled/super_mario_medley.mp3")
-        play("/home/jaq/share/music0/Unfiled/Tom Lehrer - The Old Dope Peddler.wav.mp3")
-        play("/home/jaq/share/music0/Unfiled/James Bond - Main Theme.mp3")
-    else:
-        for file in sys.argv[1:]:
+    for file in sys.argv[1:]:
+        if os.path.exists(file):
             print "playing %s" % file
             play(file)
-        
