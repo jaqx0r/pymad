@@ -1,6 +1,7 @@
 0.2
 ---
 
+* Using distutils to configure and build pymad.
 * py_madfile_new can now be passed a file object as well as a filename.
 * frame info can be retrieved from the MadFile object
 * Numerous bugfixes (see ChangeLog for details)

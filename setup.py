@@ -8,7 +8,7 @@ from distutils.core import setup
 from distutils.extension import Extension
 
 VERSION_MAJOR = 0
-VERSION_MINOR = 2
+VERSION_MINOR = 3
 pymad_version = str(VERSION_MAJOR) + "." + str(VERSION_MINOR)
 
 def get_setup():
