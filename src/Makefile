@@ -16,6 +16,6 @@ madmodule.so: $(OBJS)
 	$(CC) -Werror -Wall -pedantic -fPIC $(INC) -o $@ -c $<
 
 clean:
-	-rm -f *.o *.so *.pyc
+	-rm -f *.o *.so *.pyc *~
 
 .PHONY: clean
