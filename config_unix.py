@@ -68,6 +68,54 @@ def find_mad(mad_prefix = '/usr/local', enable_madtest = 1):
             'mad_lib_dir' : mad_lib_dir,
             'mad_include_dir' : mad_include_dir}
 
+endian_test_program = '''
+#include <stdio.h>
+
+int litend() {
+  int i = 0;
+  ((char *)(&i))[0] = 1;
+  return(i == 1);
+}
+
+int bigend() {
+  return !litend();
+}
+
+int main() {
+  if (litend()) {
+    system("touch little.endiantest");
+  } else {
+    system("touch big.endiantest");
+  }
+}
+'''
+
+def check_endian(enable_endiantest = 1):
+    """check the system for endianness"""
+
+    bigendian = 1
+
+    msg_checking('endianness')
+
+    if enable_endiantest:
+        try:
+            run_test(endian_test_program)
+            if os.path.isfile("little.endiantest"):
+                bigendian = 0
+            elif os.path.isfile("big.endiantest"):
+                bigendian = 1
+            else:
+                raise RuntimeError, "Did not produce output"
+            execute("rm -f little.endiantest big.endiantest", 0)
+        except:
+            print "test program failed"
+            return None
+
+    print "success"
+
+    return bigendian
+            
+
 def write_data(data):
     f = open('Setup', 'w')
     for item in data.items():
@@ -103,6 +151,10 @@ def main():
     if not data:
         print "Config failure"
         sys.exit(1)
+    if check_endian() == 1:
+        data["endian"] = "big"
+    else:
+        data["endian"] = "little"
     write_data(data)
 
 if __name__ == '__main__':

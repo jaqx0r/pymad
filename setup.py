@@ -34,14 +34,18 @@ def get_setup():
 
 data = get_setup()
 
+defines = [('VERSION_MAJOR', VERSION_MAJOR),
+           ('VERSION_MINOR', VERSION_MINOR),
+           ('VERSION', '"%s"' % pymad_version)]
+
+if data['endian'] == "big":
+    defines.append('BIGENDIAN', 1)
+
 madmodule = Extension(
     name='madmodule',
     sources=['src/madmodule.c',
              'src/pymadfile.c'],
-    define_macros = [('VERSION_MAJOR', VERSION_MAJOR),
-                     ('VERSION_MINOR', VERSION_MINOR),
-                     ('VERSION', '"%s"' % pymad_version)],
-    
+    define_macros = defines,
     include_dirs=[data['mad_include_dir']],
     library_dirs=[data['mad_lib_dir']],
     libraries=string.split(data['mad_libs']))
