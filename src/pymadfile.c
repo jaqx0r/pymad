@@ -46,11 +46,14 @@
  */
 
 #include <stdio.h>
+#include <stdint.h>
 #include <errno.h>
 #include <string.h>
+#include <sys/stat.h>
 
 #include "madmodule.h"
 #include "pymadfile.h"
+#include "xing.h"
 
 #if PY_VERSION_HEX < 0x01060000
 #define PyObject_DEL(op) PyMem_DEL((op))
@@ -58,6 +61,10 @@
 
 #define ERROR_MSG_SIZE  512
 #define MAD_BUF_SIZE    4096 /* should be a multiple of 4 >= 4096 */
+
+/* local helpers */
+static unsigned long calc_total_time(PyObject *);
+static signed short int madfixed_to_short(mad_fixed_t);
 
 PyTypeObject py_madfile_t = {
     PyObject_HEAD_INIT(&PyType_Type)
@@ -142,7 +149,9 @@ PyObject * py_madfile_new(PyObject * self, PyObject * args) {
     /* explicitly call read to fill the buffer and have the frame header
      * data immediately available to the caller */
     py_madfile_read((PyObject *) mf, NULL);
-  
+
+    mf->total_length = calc_total_time((PyObject *) mf);
+
     return (PyObject *) mf;
 }
 
@@ -164,6 +173,32 @@ static void py_madfile_dealloc(PyObject * self, PyObject * args) {
 	PY_MADFILE(self)->f = NULL;
     }
     PyObject_DEL(self);
+}
+
+/* FIXME: some MP3s have bogus headers, and the only way to calculate length
+ * is to decode the whole thing */
+static unsigned long
+calc_total_time(PyObject *self) {
+    mad_timer_t timer;
+    struct xing xing;
+    struct stat buf;
+    unsigned long r;
+
+    xing_init(&xing);
+    xing_parse(&xing, MAD_STREAM(self).anc_ptr, MAD_STREAM(self).anc_bitlen);
+
+    if (xing.flags & XING_FRAMES) {
+	timer = MAD_FRAME(self).header.duration;
+	mad_timer_multiply(&timer, xing.frames);
+	r = mad_timer_count(timer, MAD_UNITS_MILLISECONDS);
+    } else {
+	r = fstat(fileno(PY_MADFILE(self)->f), &buf);
+	if (r == 0)
+	    r = buf.st_size * 8 / (MAD_FRAME(self).header.bitrate / 1000);
+        else
+	    r = -1;
+    }
+    return r;
 }
 
 /* convert the mad format to an unsigned short */
@@ -442,12 +477,49 @@ py_madfile_emphasis(PyObject * self, PyObject * args) {
     return PyInt_FromLong(MAD_FRAME(self).header.emphasis);
 }
 
-/* get the current seek time in milliseconds */
+/* return the estimated playtime of the track, in milliseconds */
 static PyObject *
-py_madfile_get_time_millis(PyObject * self, PyObject * args) {
-    long millis = MAD_TIMER(self).seconds * MILLIS_PER_SECOND;
-    millis += MAD_TIMER(self).fraction / (MAD_TIMER_RESOLUTION / MILLIS_PER_SECOND);
-    return PyInt_FromLong(millis);
+py_madfile_total_time(PyObject * self, PyObject * args) {
+    return PyInt_FromLong(PY_MADFILE(self)->total_length);
+}
+
+/* return the current position in the track, in milliseconds */
+static PyObject *
+py_madfile_current_time(PyObject * self, PyObject * args) {
+    return PyInt_FromLong(mad_timer_count(MAD_TIMER(self),
+					  MAD_UNITS_MILLISECONDS));
+}
+
+/* seek playback to the given position, in milliseconds, from the start
+ * FIXME: this implementation is really evil -- amazing that it semi-works */
+static PyObject *
+py_madfile_seek_time(PyObject * self, PyObject * args) {
+    long pos, offset;
+    struct stat buf;
+    int r;
+
+    if (!PyArg_ParseTuple(args, "l", &pos) || pos < 0) {
+	PyErr_SetString(PyExc_TypeError, "invalid argument");
+	return NULL;
+    }
+
+    r = fstat(fileno(PY_MADFILE(self)->f), &buf);
+    if (r != 0) {
+	PyErr_SetString(PyExc_IOError, "couldn't stat file");
+	return NULL;
+    }
+
+    offset = ((double)pos / PY_MADFILE(self)->total_length) * buf.st_size;
+
+    r = fseek(PY_MADFILE(self)->f, offset, SEEK_SET);
+    if (r != 0) {
+	PyErr_SetString(PyExc_IOError, "couldn't seek file");
+	return NULL;
+    }
+
+    mad_timer_set(&MAD_TIMER(self), 0, pos, 1000);
+
+    return Py_None;
 }
 
 /* housekeeping */
@@ -459,7 +531,9 @@ static PyMethodDef madfile_methods[] = {
     { "samplerate", py_madfile_samplerate, METH_VARARGS, "" },
     { "bitrate", py_madfile_bitrate, METH_VARARGS, "" },
     { "emphasis", py_madfile_emphasis, METH_VARARGS, "" },
-    { "get_time_millis", py_madfile_get_time_millis, METH_VARARGS, "" },
+    { "total_time", py_madfile_total_time, METH_VARARGS, "" },
+    { "current_time", py_madfile_current_time, METH_VARARGS, "" },
+    { "seek_time", py_madfile_seek_time, METH_VARARGS, "" },
     { NULL, 0, 0, NULL }
 };
 

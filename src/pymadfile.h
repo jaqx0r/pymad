@@ -26,6 +26,7 @@ typedef struct {
     unsigned char * buffy;
     unsigned int bufsiz;
     unsigned int framecount;
+    unsigned long total_length;
 } py_madfile; /* MadFile */
 
 #define PY_MADFILE(x) ((py_madfile *) x)
@@ -45,6 +46,9 @@ static PyObject * py_madfile_mode(PyObject * self, PyObject * args);
 static PyObject * py_madfile_samplerate(PyObject * self, PyObject * args);
 static PyObject * py_madfile_bitrate(PyObject * self, PyObject * args);
 static PyObject * py_madfile_emphasis(PyObject * self, PyObject * args);
+static PyObject * py_madfile_total_time(PyObject * self, PyObject * args);
+static PyObject * py_madfile_current_time(PyObject * self, PyObject * args);
+static PyObject * py_madfile_seek_time(PyObject * self, PyObject * args);
 static PyObject * py_madfile_getattr(PyObject * self, char * name);
 
 #endif /* __PY_MADFILE_H__ */

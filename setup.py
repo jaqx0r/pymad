@@ -43,8 +43,7 @@ if data['endian'] == "big":
 
 madmodule = Extension(
     name='madmodule',
-    sources=['src/madmodule.c',
-             'src/pymadfile.c'],
+    sources=['src/madmodule.c', 'src/pymadfile.c', 'src/xing.c'],
     define_macros = defines,
     include_dirs=[data['mad_include_dir']],
     library_dirs=[data['mad_lib_dir']],
