@@ -429,7 +429,7 @@ py_madfile_bitrate(PyObject * self, PyObject * args) {
 /* return the emphasis value */
 static PyObject *
 py_madfile_emphasis(PyObject * self, PyObject * args) {
-    return PyInt_FromLong(MAD_FRAME(self).header.bitrate);
+    return PyInt_FromLong(MAD_FRAME(self).header.emphasis);
 }
 
 /* housekeeping */
