@@ -39,7 +39,7 @@ defines = [('VERSION_MAJOR', VERSION_MAJOR),
            ('VERSION', '"%s"' % pymad_version)]
 
 if data['endian'] == "big":
-    defines.append('BIGENDIAN', 1)
+    defines.append(('BIGENDIAN', 1))
 
 madmodule = Extension(
     name='madmodule',

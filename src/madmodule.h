@@ -1,4 +1,4 @@
-/* $Id$
+/* $Id: madmodule.h,v 1.1 2002/06/17 01:16:56 jaq Exp $
  *
  * python interface to libmad (the mpeg audio decoder library)
  *

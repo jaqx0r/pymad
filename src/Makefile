@@ -1,4 +1,4 @@
-# $Id$
+# $Id: Makefile,v 1.4 2002/08/03 03:03:40 cgray Exp $
 
 # builds the libmad python binding for use in julie
 
