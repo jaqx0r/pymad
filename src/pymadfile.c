@@ -201,6 +201,7 @@ calc_total_time(PyObject *self) {
         o = PyObject_CallMethod(PY_MADFILE(self)->fobject, "fileno", NULL);
         if (o == NULL) {
           /* no fileno method is provided, probably not a file */
+	  PyErr_Clear();
           return -1;
         }
         fnum = PyInt_AsLong(o);
