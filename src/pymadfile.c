@@ -1,4 +1,4 @@
-/* $Id: pymadfile.c,v 1.19 2003/01/11 13:15:39 jaq Exp $
+/* $Id: pymadfile.c,v 1.20 2003/02/05 06:29:23 jaq Exp $
  *
  * python interface to libmad (the mpeg audio decoder library)
  *
@@ -193,8 +193,8 @@ calc_total_time(PyObject *self) {
 	r = mad_timer_count(timer, MAD_UNITS_MILLISECONDS);
     } else {
 	r = fstat(fileno(PY_MADFILE(self)->f), &buf);
-	if (r == 0)
-	    r = buf.st_size * 8 / (MAD_FRAME(self).header.bitrate / 1000);
+	if (r == 0 && MAD_FRAME(self).header.bitrate)
+	    r = buf.st_size * 8 / MAD_FRAME(self).header.bitrate * 1000;
         else
 	    r = -1;
     }
