@@ -1,3 +1,11 @@
+NEWS for pymad
+==============
+
+0.4.1 (06/02/03)
+-----
+
+* Fixed FPE caused by division by zero in the track time code.
+
 0.4
 ---
 
