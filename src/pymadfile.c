@@ -8,7 +8,7 @@
  * the  GNU General Public License (version 2, or at your discretion,
  * any later version).  This is the same license as libmad.
  *
- * the code in py_madfile_read was copied from the madlld program, which
+ * The code in py_madfile_read was copied from the madlld program, which
  * can be found at http://www.bsd-dk.dk/~elrond/audio/madlld/ and carries
  * the following copyright and license:
  *
