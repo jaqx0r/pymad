@@ -210,11 +210,17 @@ py_madfile_read(PyObject * self, PyObject * args) {
 	  PyErr_SetString(PyExc_IOError, errmsg);
 	  return NULL;
 	}
+	/* again, if we're at EOF, return None */
+	if (feof(PY_MADFILE(self)->f)) {
+	  Py_INCREF(Py_None);
+	  return Py_None;
+	}
       }
       
       /* Pipe the new buffer content to libmad's stream decode
        * facility */
-      mad_stream_buffer(&MAD_STREAM(self), MAD_BUFFY(self), readsize + remaining);
+      mad_stream_buffer(&MAD_STREAM(self), MAD_BUFFY(self),
+			readsize + remaining);
       MAD_STREAM(self).error = 0;
     }
     
