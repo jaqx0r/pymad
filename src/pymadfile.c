@@ -97,40 +97,29 @@ PyTypeObject py_madfile_t = {
 
 PyObject * py_madfile_new(PyObject * self, PyObject * args) {
     py_madfile * mf = NULL;
-    FILE * file;
     int close_file = 0;
     char * fname;
     PyObject *fobject = NULL;
-    PyObject *readmethod = NULL;
     char *initial;
     long ibytes = 0;
-    char errmsg[ERROR_MSG_SIZE];
     unsigned long int bufsiz = MAD_BUF_SIZE;
     int n;
   
     if (PyArg_ParseTuple(args, "s|l:MadFile", &fname, &bufsiz)) {
-	file = fopen(fname, "r");
+        fobject = PyFile_FromString(fname, "r");
 	close_file = 1;
-	if (file == NULL) {
-	    snprintf(errmsg, ERROR_MSG_SIZE,
-		     "Couldn't open file: %s", fname);
-	    PyErr_SetString(PyExc_IOError, errmsg);
-	    PyObject_DEL(mf);
+	if (fobject == NULL) {
 	    return NULL;
 	}
     } else if (PyArg_ParseTuple(args, "O|sl:MadFile",
 				&fobject, &initial, &ibytes)) {
 	/* clear the first failure */
 	PyErr_Clear();
-	file = PyFile_AsFile(fobject);
-	if (file == NULL) {
-            readmethod = PyObject_GetAttrString(fobject, "read");
-            if (!readmethod) {
-		PyErr_Clear();
-                PyErr_SetString(PyExc_TypeError,
-				"argument must have 'read' method");
-                return NULL;
-            }
+        /* make sure that if nothing else we can read it */
+        if (!PyObject_HasAttrString(fobject, "read")) {
+            Py_DECREF(fobject);
+	    PyErr_SetString(PyExc_IOError, "Object must have a read method");
+            return NULL;
         }
     } else
 	return NULL;
@@ -140,17 +129,8 @@ PyObject * py_madfile_new(PyObject * self, PyObject * args) {
     if (bufsiz <= 4096) bufsiz = 4096;
   
     mf = PyObject_NEW(py_madfile, &py_madfile_t);
-    if (readmethod) {
-        mf->f = NULL;
-        mf->close_file = 0;
-        mf->fobject = fobject;
-        mf->readmethod = readmethod;
-    } else {
-        mf->f = file;
-        mf->close_file = close_file;
-        mf->fobject = NULL;
-        mf->readmethod = NULL;
-    }
+    mf->fobject = fobject;
+    mf->close_file = close_file;
 
     /* initialise the mad structs */
     mad_stream_init(&mf->stream);
@@ -167,15 +147,15 @@ PyObject * py_madfile_new(PyObject * self, PyObject * args) {
      * data immediately available to the caller */
     py_madfile_read((PyObject *) mf, NULL);
 
-    /* can only work out total time on real files */
-    if (mf->f)
-        mf->total_length = calc_total_time((PyObject *) mf);
+    mf->total_length = calc_total_time((PyObject *) mf);
 
     return (PyObject *) mf;
 }
 
 static void py_madfile_dealloc(PyObject * self, PyObject * args) {
-    if (PY_MADFILE(self)->f) {
+    PyObject *o;
+
+    if (PY_MADFILE(self)->fobject) {
 	mad_synth_finish(&MAD_SYNTH(self));
 	mad_frame_finish(&MAD_FRAME(self));
 	mad_stream_finish(&MAD_STREAM(self));
@@ -184,12 +164,15 @@ static void py_madfile_dealloc(PyObject * self, PyObject * args) {
 	MAD_BUFFY(self) = NULL;
 	MAD_BUFSIZ(self) = 0;
     
-	/* python seems to close this for us now (or segfault trying!)
-	 * if we pass in a file handle */
-	if (PY_MADFILE(self)->close_file)
-	    fclose(PY_MADFILE(self)->f);
+	if (PY_MADFILE(self)->close_file) {
+            o = PyObject_CallMethod(PY_MADFILE(self)->fobject, "close", NULL);
+            if (o != NULL) {
+                Py_DECREF(o);
+            }
+        }
 
-	PY_MADFILE(self)->f = NULL;
+	Py_DECREF(PY_MADFILE(self)->fobject);
+	PY_MADFILE(self)->fobject = NULL;
     }
     PyObject_DEL(self);
 }
@@ -202,6 +185,8 @@ calc_total_time(PyObject *self) {
     struct xing xing;
     struct stat buf;
     unsigned long r;
+    PyObject *o;
+    int fnum;
 
     xing_init(&xing);
     xing_parse(&xing, MAD_STREAM(self).anc_ptr, MAD_STREAM(self).anc_bitlen);
@@ -211,7 +196,14 @@ calc_total_time(PyObject *self) {
 	mad_timer_multiply(&timer, xing.frames);
 	r = mad_timer_count(timer, MAD_UNITS_MILLISECONDS);
     } else {
-	r = fstat(fileno(PY_MADFILE(self)->f), &buf);
+        o = PyObject_CallMethod(PY_MADFILE(self)->fobject, "fileno", NULL);
+        if (o == NULL) {
+          /* no fileno method is provided, probably not a file */
+          return -1;
+        }
+        fnum = PyInt_AsLong(o);
+        Py_DECREF(o);
+	r = fstat(fnum, &buf);
 	if (r == 0 && MAD_FRAME(self).header.bitrate)
 	    r = buf.st_size * 8 / MAD_FRAME(self).header.bitrate * 1000;
         else
@@ -266,11 +258,14 @@ py_madfile_read(PyObject * self, PyObject * args) {
     int nextframe = 0;
     char errmsg[ERROR_MSG_SIZE];
 
-    /* if we're reading a file, and it's at EOF, then return None */
-    if (PY_MADFILE(self)->f && feof(PY_MADFILE(self)->f)) {
+    /* if we are at EOF, then return None */
+    // FIXME: move to if null read
+    /*
+    if (feof(PY_MADFILE(self)->f)) {
 	Py_INCREF(Py_None);
 	return Py_None;
     }
+    */
   
     /* nextframe might get set during this loop, in which case the
      * bucket needs to be refilled */
@@ -283,6 +278,8 @@ py_madfile_read(PyObject * self, PyObject * args) {
 	    (MAD_STREAM(self).error == MAD_ERROR_BUFLEN)) {
 	    size_t readsize, remaining;
 	    unsigned char * readstart;
+            PyObject *o_read;
+            char * o_buffer;
       
 	    /* [1] libmad may not consume all bytes of the input buffer.
 	     *     If the last frame in the buffer is not wholly contained
@@ -314,45 +311,24 @@ py_madfile_read(PyObject * self, PyObject * args) {
 		    remaining = 0;
       
 	    /* Fill in the buffer.  If an error occurs, make like a tree */
-            if (PY_MADFILE(self)->fobject) {
-                PyObject *args, *retval;
+            o_read = PyObject_CallMethod(PY_MADFILE(self)->fobject,
+					 "read", "i", readsize);
+            if (o_read == NULL) {
+                // FIXME: should specifically handle read errors...
+                Py_INCREF(Py_None);
+                return Py_None;
+            }
+            PyString_AsStringAndSize(o_read, &o_buffer, &readsize);
+            // EOF?
+            if (readsize == 0) {
+                Py_DECREF(o_read);
+                Py_INCREF(Py_None);
+                return Py_None;
+            }
+            // FIXME: deallocate o_read?
+            memcpy(readstart, o_buffer, readsize);
+            Py_DECREF(o_read);
 
-                args = Py_BuildValue("(i)", readsize);
-                retval = PyObject_Call(PY_MADFILE(self)->readmethod, args, NULL);
-                Py_XDECREF(args);
-                if (retval == NULL)
-                    return NULL;
-                if (!PyString_Check(retval)) {
-                    Py_DECREF(retval);
-                    return NULL;
-                }
-                readsize = PyString_GET_SIZE(retval);
-		/* pretend a readsize of 0 is EOF */ 
-                if (readsize == 0) {
-                    Py_DECREF(retval);
-                    Py_INCREF(Py_None);
-                    return Py_None;
-                } else {
-		    memcpy(readstart, PyString_AsString(retval), readsize);
-		    Py_DECREF(retval);
-		}
-	    } else {
-		readsize = fread(readstart, 1, readsize, PY_MADFILE(self)->f);
-		if (readsize <= 0) {
-		    if (ferror(PY_MADFILE(self)->f)) {
-			snprintf(errmsg, ERROR_MSG_SIZE,
-				 "read error: %s", strerror(errno));
-			PyErr_SetString(PyExc_IOError, errmsg);
-			return NULL;
-		    }
-		    /* again, if we're at EOF, return None */
-		    if (feof(PY_MADFILE(self)->f)) {
-			Py_INCREF(Py_None);
-			return Py_None;
-		    }
-		}
-	    }
-      
 	    /* Pipe the new buffer content to libmad's stream decode
 	     * facility */
 	    mad_stream_buffer(&MAD_STREAM(self), MAD_BUFFY(self),
@@ -540,13 +516,23 @@ py_madfile_seek_time(PyObject * self, PyObject * args) {
     long pos, offset;
     struct stat buf;
     int r;
+    PyObject *o;
+    int fnum;
 
     if (!PyArg_ParseTuple(args, "l", &pos) || pos < 0) {
 	PyErr_SetString(PyExc_TypeError, "invalid argument");
 	return NULL;
     }
 
-    r = fstat(fileno(PY_MADFILE(self)->f), &buf);
+    o = PyObject_CallMethod(PY_MADFILE(self)->fobject, "fileno", NULL);
+    if (o == NULL) {
+	PyErr_SetString(PyExc_IOError, "couldn't get fileno");
+        return NULL;
+    }
+    fnum = PyInt_AsLong(o);
+    Py_DECREF(o);
+    
+    r = fstat(fnum, &buf);
     if (r != 0) {
 	PyErr_SetString(PyExc_IOError, "couldn't stat file");
 	return NULL;
@@ -554,11 +540,13 @@ py_madfile_seek_time(PyObject * self, PyObject * args) {
 
     offset = ((double)pos / PY_MADFILE(self)->total_length) * buf.st_size;
 
-    r = fseek(PY_MADFILE(self)->f, offset, SEEK_SET);
-    if (r != 0) {
+    o = PyObject_CallMethod(PY_MADFILE(self)->fobject, "seek", "l", offset);
+    if (o == NULL) {
+        /* most likely no seek method -- FIXME get better checking */
 	PyErr_SetString(PyExc_IOError, "couldn't seek file");
 	return NULL;
     }
+    Py_DECREF(o);
 
     mad_timer_set(&MAD_TIMER(self), 0, pos, 1000);
 
