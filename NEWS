@@ -1,3 +1,9 @@
+0.4
+---
+
+* Now returns current/total track time.
+* Can seek to a time offset in track.
+
 0.3
 ---
 
