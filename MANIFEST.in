@@ -1,0 +1,2 @@
+include config_unix.py AUTHORS COPYING README
+recursive-include src *.h
