@@ -144,6 +144,10 @@ PyObject * py_madfile_new(PyObject * self, PyObject * args) {
   
   mf->buffy = malloc(bufsiz * sizeof(unsigned char));
   mf->bufsiz = bufsiz;
+
+  /* explicitly call read to fill the buffer and have the frame header
+   * data immediately available to the caller */
+  py_madfile_read((PyObject *) mf, NULL);
   
   return (PyObject *) mf;
 }
@@ -333,17 +337,6 @@ py_madfile_read(PyObject * self, PyObject * args) {
 	
   } while (nextframe);
   
-  /* The characteristics of the streams first frame are printed on
-   * stderr. The first frame is representative of the entire stream.
-   */
-#if 0
-  if (PY_MADFILE(self)->framecount == 0) {
-    if (printframeinfo(stderr, &MAD_FRAME(self).header)) {
-      return NULL;
-    }
-  }
-#endif
-  
   /* Accounting.  The computed frame duration is in the frame header
    * structure.  It is expressed as a fixed point number whose data
    * type is mad_timer_t.  It is different from the fixed point
@@ -410,24 +403,45 @@ py_madfile_read(PyObject * self, PyObject * args) {
     return pybuf;
 }
 
-/* get stream info from mad */
-static PyObject * py_madfile_info(PyObject * self, PyObject * args) {
-  /* FIXME: actually implement this function
-    PyObject * dict, * item;
-    char * key, * val;
-    
-    dict = PyDict_New();
-    
-    PyDict_SetItemString
-  */
-  return NULL;
+/* return the MPEG layer */
+static PyObject *
+py_madfile_layer(PyObject * self, PyObject * args) {
+    return PyInt_FromLong(MAD_FRAME(self).header.layer);
+}
+
+/* return the channel mode */
+static PyObject *
+py_madfile_mode(PyObject * self, PyObject * args) {
+    return PyInt_FromLong(MAD_FRAME(self).header.mode);
+}
+
+/* return the stream samplerate */
+static PyObject *
+py_madfile_samplerate(PyObject * self, PyObject * args) {
+    return PyInt_FromLong(MAD_FRAME(self).header.samplerate);
+}
+
+/* return the stream bitrate */
+static PyObject *
+py_madfile_bitrate(PyObject * self, PyObject * args) {
+    return PyInt_FromLong(MAD_FRAME(self).header.bitrate);
+}
+
+/* return the emphasis value */
+static PyObject *
+py_madfile_emphasis(PyObject * self, PyObject * args) {
+    return PyInt_FromLong(MAD_FRAME(self).header.bitrate);
 }
 
 /* housekeeping */
 
 static PyMethodDef madfile_methods[] = {
   { "read", py_madfile_read, METH_VARARGS, "" },
-  { "info", py_madfile_info, METH_VARARGS, "" },
+  { "layer", py_madfile_layer, METH_VARARGS, "" },
+  { "mode", py_madfile_mode, METH_VARARGS, "" },
+  { "samplerate", py_madfile_samplerate, METH_VARARGS, "" },
+  { "bitrate", py_madfile_bitrate, METH_VARARGS, "" },
+  { "emphasis", py_madfile_emphasis, METH_VARARGS, "" },
   { NULL, 0, 0, NULL }
 };
 

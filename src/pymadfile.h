@@ -42,7 +42,11 @@ extern PyTypeObject py_madfile_t;
 
 static void py_madfile_dealloc(PyObject * self, PyObject * args);
 static PyObject * py_madfile_read(PyObject * self, PyObject * args);
+static PyObject * py_madfile_layer(PyObject * self, PyObject * args);
+static PyObject * py_madfile_mode(PyObject * self, PyObject * args);
+static PyObject * py_madfile_samplerate(PyObject * self, PyObject * args);
+static PyObject * py_madfile_bitrate(PyObject * self, PyObject * args);
+static PyObject * py_madfile_emphasis(PyObject * self, PyObject * args);
 static PyObject * py_madfile_getattr(PyObject * self, char * name);
-static PyObject * py_madfile_info(PyObject * self, PyObject * args);
 
 #endif /* __PY_MADFILE_H__ */
