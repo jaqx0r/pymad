@@ -34,10 +34,6 @@ def get_setup():
 
 data = get_setup()
 
-mad_include_dir = data['mad_include_dir']
-mad_lib_dir = data['mad_lib_dir']
-mad_libs = string.split(data['mad_libs'])
-
 madmodule = Extension(
     name='madmodule',
     sources=['src/madmodule.c',
@@ -46,9 +42,9 @@ madmodule = Extension(
                      ('VERSION_MINOR', VERSION_MINOR),
                      ('VERSION', '"%s"' % pymad_version)],
     
-    include_dirs=[mad_include_dir],
-    library_dirs=[mad_lib_dir],
-    libraries=mad_libs)
+    include_dirs=[data['mad_include_dir']],
+    library_dirs=[data['mad_lib_dir']],
+    libraries=string.split(data['mad_libs']))
 
 setup ( # Distribution metadata
     name = "pymad",
@@ -59,7 +55,4 @@ setup ( # Distribution metadata
     url = "http://spacepants.org/src/pymad/",
     license = "GPL",
     
-    packages = ['mad'],
-    package_dir = {'mad' : 'src'},
-    ext_package = 'mad',
     ext_modules = [madmodule])
