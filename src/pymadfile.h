@@ -20,6 +20,7 @@
 typedef struct {
 	PyObject_HEAD
 	FILE * f;
+	int close_file;
 	struct mad_stream stream;
 	struct mad_frame  frame;
 	struct mad_synth  synth;

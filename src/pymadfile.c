@@ -54,15 +54,34 @@ PyTypeObject py_madfile_t = {
 
 PyObject * py_madfile_new(PyObject * self, PyObject * args) {
   py_madfile * mf;
+  FILE * file;
+  int close_file = 0;
   char * fname;
+  PyObject *fobject = NULL;
+  char *initial;
+  long ibytes = 0;
   char errmsg[512]; /* FIXME: use MSG_SIZE or something */
   unsigned long int bufsiz = 4096;
   int n;
   
-  if (!PyArg_ParseTuple(args, "s|l:MadFile", &fname, &bufsiz)) {
+  if (PyArg_ParseTuple(args, "s|l:MadFile", &fname, &bufsiz)) {
+    file = fopen(fname, "r");
+    close_file = 1;
+    if (file == NULL) {
+      snprintf(errmsg, 512, "Couldn't open file: %s", fname);
+      PyErr_SetString(PyExc_IOError, errmsg);
+      PyObject_DEL(mf);
+      return NULL;
+    }
+  } else if (PyArg_ParseTuple(args, "O!|sl:MadFile", &PyFile_Type, &fobject, &initial, &ibytes)) {
+    /* clear the first failure */
+    PyErr_Clear();
+    file = PyFile_AsFile(fobject);
+    if (file == NULL) 
+      return NULL;
+  } else
     return NULL;
-  }
-  
+
   /* bufsiz must be an integer multiple of 4 */
 #if 0
   switch (bufsiz % 4) {
@@ -76,12 +95,9 @@ PyObject * py_madfile_new(PyObject * self, PyObject * args) {
   if (bufsiz <= 4096) bufsiz = 4096;
   
   mf = PyObject_NEW(py_madfile, &py_madfile_t);
-  if ((mf->f = fopen(fname, "r")) == NULL) {
-    snprintf(errmsg, 512, "Couldn't open file: %s", fname);
-    PyErr_SetString(PyExc_IOError, errmsg);
-    PyObject_DEL(mf);
-    return NULL;
-  }
+  mf->f = file;
+  mf->close_file = close_file;
+
   /* initialise the mad structs */
   mad_stream_init(&mf->stream);
   mad_frame_init(&mf->frame);
@@ -98,15 +114,20 @@ PyObject * py_madfile_new(PyObject * self, PyObject * args) {
 
 static void py_madfile_dealloc(PyObject * self, PyObject * args) {
   if (PY_MADFILE(self)->f) {
+    mad_synth_finish(&MAD_SYNTH(self));
+    mad_frame_finish(&MAD_FRAME(self));
+    mad_stream_finish(&MAD_STREAM(self));
+
     free(MAD_BUFFY(self));
     MAD_BUFFY(self) = NULL;
     MAD_BUFSIZ(self) = 0;
-    fclose(PY_MADFILE(self)->f);
-    mad_synth_finish(&MAD_SYNTH(self));
-    /* for some reason, this function is segfaulting python when it
-     * cleans up */
-    /* mad_frame_finish(&MAD_FRAME(self)); */
-    mad_stream_finish(&MAD_STREAM(self));
+    
+    /* python seems to close this for us now (or segfault trying!)
+     * if we pass in a file handle */
+    if (PY_MADFILE(self)->close_file)
+	fclose(PY_MADFILE(self)->f);
+
+    PY_MADFILE(self)->f = NULL;
   }
   PyObject_DEL(self);
 }
