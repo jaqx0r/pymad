@@ -7,9 +7,10 @@ sys.path.insert(0, "build/lib.linux-ppc-2.3")
 print sys.path
 
 import mad
+import urllib
 
-def play(file):
-    mf = mad.MadFile(file)
+def play(u):
+    mf = mad.MadFile(u)
     
     if mf.layer() == mad.LAYER_I:
         print "MPEG Layer I"
@@ -42,9 +43,9 @@ def play(file):
         
     print "bitrate %lu bps" % mf.bitrate()
     print "samplerate %d Hz" % mf.samplerate()
-    millis = mf.total_time()
-    secs = millis / 1000
-    print "total time %d ms (%dm%2ds)" % (millis, secs / 60, secs % 60)
+    #millis = mf.total_time()
+    #secs = millis / 1000
+    #print "total time %d ms (%dm%2ds)" % (millis, secs / 60, secs % 60)
         
     dev = ao.AudioDevice('oss', bits=16, rate=mf.samplerate())
     while 1:
@@ -57,6 +58,8 @@ def play(file):
 if __name__ == "__main__":
     print "pymad version %s" % mad.__version__
     for file in sys.argv[1:]:
-        if os.path.exists(file):
+        u = urllib.urlopen(file)
+        if u:
+        #if os.path.exists(file):
             print "playing %s" % file
-            play(file)
+            play(u)
