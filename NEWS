@@ -1,3 +1,9 @@
+0.3
+---
+
+* emphasis() function now returns correct value.
+* PCM conversion works on big-endian architectures.
+
 0.2
 ---
 
