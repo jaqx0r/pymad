@@ -1,3 +1,13 @@
+pymad (0.4.1-1.1) unstable; urgency=low
+
+  * NMU.
+  * Use dh_python.
+  * Rebuild against python 2.3 (closes: #205506).
+  * Standards-version is 3.6.0.
+  * Section is python.
+
+ -- Josselin Mouette <joss@debian.org>  Mon, 18 Aug 2003 17:26:49 +0200
+
 pymad (0.4.1-1) unstable; urgency=low
 
   * New upstream release
