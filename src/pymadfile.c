@@ -442,6 +442,14 @@ py_madfile_emphasis(PyObject * self, PyObject * args) {
     return PyInt_FromLong(MAD_FRAME(self).header.emphasis);
 }
 
+/* get the current seek time in milliseconds */
+static PyObject *
+py_madfile_get_time_millis(PyObject * self, PyObject * args) {
+    long millis = MAD_TIMER(self).seconds * MILLIS_PER_SECOND;
+    millis += MAD_TIMER(self).fraction / (MAD_TIMER_RESOLUTION / MILLIS_PER_SECOND);
+    return PyInt_FromLong(millis);
+}
+
 /* housekeeping */
 
 static PyMethodDef madfile_methods[] = {
@@ -451,6 +459,7 @@ static PyMethodDef madfile_methods[] = {
     { "samplerate", py_madfile_samplerate, METH_VARARGS, "" },
     { "bitrate", py_madfile_bitrate, METH_VARARGS, "" },
     { "emphasis", py_madfile_emphasis, METH_VARARGS, "" },
+    { "get_time_millis", py_madfile_get_time_millis, METH_VARARGS, "" },
     { NULL, 0, 0, NULL }
 };
 
