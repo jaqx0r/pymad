@@ -1,0 +1,4 @@
+precious ^MANIFEST$
+precious ^Setup$
+precious ^build$
+precious ^dist$
