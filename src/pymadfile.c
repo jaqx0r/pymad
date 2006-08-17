@@ -51,6 +51,7 @@
 #include <errno.h>
 #include <string.h>
 #include <sys/stat.h>
+#include <sys/mman.h>
 
 #include "madmodule.h"
 #include "pymadfile.h"
@@ -179,8 +180,8 @@ static void py_madfile_dealloc(PyObject * self, PyObject * args) {
     PyObject_DEL(self);
 }
 
-/* FIXME: some MP3s have bogus headers, and the only way to calculate length
- * is to decode the whole thing */
+/* Calculates length of MP3 by stepping through the frames and summing up
+ * the duration of each frame. */
 static unsigned long
 calc_total_time(PyObject *self) {
     mad_timer_t timer;
@@ -207,10 +208,40 @@ calc_total_time(PyObject *self) {
         fnum = PyInt_AsLong(o);
         Py_DECREF(o);
 	r = fstat(fnum, &buf);
-	if (r == 0 && MAD_FRAME(self).header.bitrate)
-	    r = buf.st_size * 8 / MAD_FRAME(self).header.bitrate * 1000;
-        else
-	    r = -1;
+
+	/* Figure out actual length of file by stepping through it.
+	 * This is a stripped down version of how madplay does it. */
+	void *ptr = mmap(0, buf.st_size, PROT_READ, MAP_SHARED, fnum, 0);
+	if(!ptr) {
+            fprintf(stderr, "mmap failed, can't calculate length");
+            return -1;
+	}
+
+        mad_timer_t time = mad_timer_zero;
+        struct mad_stream stream;
+        struct mad_header header;
+
+        mad_stream_init(&stream);
+        mad_header_init(&header);
+
+        mad_stream_buffer(&stream, ptr, buf.st_size);
+
+        while (1) {
+            if(mad_header_decode(&header, &stream) == -1) {
+                if( MAD_RECOVERABLE(stream.error))
+                    continue;
+                else
+                    break;
+            }
+
+            mad_timer_add(&time, header.duration);
+        }
+
+        if (munmap(ptr, buf.st_size) == -1) {
+            return -1;
+        }
+
+        r = time.seconds * 1000;
     }
     return r;
 }
