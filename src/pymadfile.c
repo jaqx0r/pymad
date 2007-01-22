@@ -62,10 +62,11 @@
 #endif
 
 #define ERROR_MSG_SIZE  512
-#define MAD_BUF_SIZE    4096 /* should be a multiple of 4 >= 4096 */
+#define MAD_BUF_SIZE    (5*8192) /* should be a multiple of 4 >= 4096 and large enough to capture possible 
+                                    junk at beginning of MP3 file*/
 
 /* local helpers */
-static unsigned long calc_total_time(PyObject *);
+static unsigned long    calc_total_time(PyObject *);
 static signed short int madfixed_to_short(mad_fixed_t);
 
 PyTypeObject py_madfile_t = {
@@ -129,7 +130,7 @@ PyObject * py_madfile_new(PyObject * self, PyObject * args) {
     /* bufsiz must be an integer multiple of 4 */
     if ((n = bufsiz % 4)) bufsiz -= n;
     if (bufsiz <= 4096) bufsiz = 4096;
-  
+
     mf = PyObject_NEW(py_madfile, &py_madfile_t);
     Py_INCREF(fobject);
     mf->fobject = fobject;
@@ -142,7 +143,7 @@ PyObject * py_madfile_new(PyObject * self, PyObject * args) {
     mad_timer_reset(&mf->timer);
   
     mf->framecount = 0;
-  
+
     mf->buffy = malloc(bufsiz * sizeof(unsigned char));
     mf->bufsiz = bufsiz;
 
@@ -286,10 +287,11 @@ madfixed_to_short(mad_fixed_t sample) {
 
 static PyObject * 
 py_madfile_read(PyObject * self, PyObject * args) {
-    PyObject * pybuf, * tuple; /* output objects */
+    PyObject * pybuf;    /* return object containing output buffer*/
     char * buffy; /* output buffer */
     unsigned int i, size;
     int nextframe = 0;
+    int result;
     char errmsg[ERROR_MSG_SIZE];
 
     /* if we are at EOF, then return None */
@@ -359,7 +361,6 @@ py_madfile_read(PyObject * self, PyObject * args) {
                 Py_INCREF(Py_None);
                 return Py_None;
             }
-            // FIXME: deallocate o_read?
             memcpy(readstart, o_buffer, readsize);
             Py_DECREF(o_read);
 
@@ -398,14 +399,17 @@ py_madfile_read(PyObject * self, PyObject * args) {
 	 * this case one can call again mad_frame_decode() in order to
 	 * skip the faulty part and resync to the next frame.
 	 */
-	if (mad_frame_decode(&MAD_FRAME(self), &MAD_STREAM(self))) {
+        Py_BEGIN_ALLOW_THREADS
+	result = mad_frame_decode(&MAD_FRAME(self), &MAD_STREAM(self));
+        Py_END_ALLOW_THREADS
+        if (result) {
 	    if (MAD_RECOVERABLE(MAD_STREAM(self).error)) {
 		/* FIXME: prefer to return an error string to the caller
-		 * rather than print to stderr
+		 * rather than print to stderr 
 		fprintf(stderr, "mad: recoverable frame level error: %s\n",
 		        mad_stream_errorstr(&MAD_STREAM(self)));
 		fflush(stderr);
-		*/
+                */
 		/* go onto the next frame */
 		nextframe = 1;
 	    } else {
@@ -424,6 +428,8 @@ py_madfile_read(PyObject * self, PyObject * args) {
 	
     } while (nextframe);
   
+    Py_BEGIN_ALLOW_THREADS
+    
     /* Accounting.  The computed frame duration is in the frame header
      * structure.  It is expressed as a fixed point number whose data
      * type is mad_timer_t.  It is different from the fixed point
@@ -438,24 +444,16 @@ py_madfile_read(PyObject * self, PyObject * args) {
     /* Once decoded, the frame can be synthesised to PCM samples.
      * No errors are reported by mad_synth_frame() */
     mad_synth_frame(&MAD_SYNTH(self), &MAD_FRAME(self));
+
+    Py_END_ALLOW_THREADS
   
     /* Create the buffer to store the PCM samples in, so python can
      * use it.  We do 4 pointer increments per sample in the buffer,
      * so make it 4 times as big as the number of samples */
     size = MAD_SYNTH(self).pcm.length * 4;
     pybuf = PyBuffer_New(size);
-  
-    /* create a tuple object so we can get at the stuff in buf */
-    tuple = PyTuple_New(1);
-    Py_INCREF(pybuf);
-    PyTuple_SET_ITEM(tuple, 0, pybuf);
-    if (!PyArg_ParseTuple(tuple, "t#", &buffy, &size)) {
-	PyErr_SetString(PyExc_TypeError, "borken buffer tuple!");
-	return NULL;
-    }
-    /* no longer use tuple */
-    Py_DECREF(tuple);
-  
+    PyObject_AsWriteBuffer(pybuf, &buffy, &size);
+
     /* die if we don't have the space */
     if (size < MAD_SYNTH(self).pcm.length * 4) {
 	PyErr_SetString(PyExc_MemoryError, "allocated buffer too small");
