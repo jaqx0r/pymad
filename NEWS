@@ -1,6 +1,15 @@
 NEWS for pymad
 ==============
 
+0.6
+---
+
+2007-01-22
+
+ * Fix decoding error with files containing largish id3v2 tags (Joerg
+   Lehmann)
+ * Fix length calculation (Richard Adenling)
+
 0.5.1 (07/10/03)
 -----
 
