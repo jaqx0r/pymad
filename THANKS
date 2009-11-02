@@ -1,7 +1,7 @@
 pymad THANKS
 ============
 
-Many people contributed to pymad by reporting problems, suggesting VARIOUS
+Many people contributed to pymad by reporting problems, suggesting various
 improvements, or submitting actual code.  Here is a list of these people,
 alphabetically by surname.  Help me keep it complete and exempt of errors.
 
@@ -9,8 +9,9 @@ Richard Adenling    <dreeze@gmail.com>
 Andrew Baumann	    <andrewb@cse.unsw.edu.au>
 Charles Gray	    <cgray@cse.unsw.edu.au>
 Joerg Lehmann	    <joerg@luga.de>
-Ben Leslie	    <benno@benno.id.au>
+Ben Leslie	        <benno@benno.id.au>
 Josselin Mouette    <joss@debian.org>
+Erik Osheim		    <erik@plastic-idolatry.com>
 Jean-Claude Rimbault	<jean-claude@rimbault.net>
 Daniel Torop	    <dtorop@panix.com>
 Brian Warner	    <warner@lothar.com>
