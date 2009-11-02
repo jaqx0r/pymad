@@ -1,3 +1,13 @@
+pymad (0.5.4-2) unstable; urgency=low
+
+  * Added watch file.
+  * Removed python2.2 package.  (Closes: #351135)
+  * Updated build dependency to specify python2.3-dev instead of python-dev.
+  * Bumped standards version to 3.6.2 (no other changes necessary).
+  * Updated FSF address in the copyright file.
+
+ -- Jamie Wilkinson <jaq@debian.org>  Tue,  4 Apr 2006 14:20:27 +1000
+
 pymad (0.5.4-1) unstable; urgency=low
 
   * New upstream version. 

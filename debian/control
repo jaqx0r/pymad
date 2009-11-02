@@ -2,8 +2,8 @@ Source: pymad
 Section: python
 Priority: optional
 Maintainer: Jamie Wilkinson <jaq@debian.org>
-Build-Depends: debhelper (>> 4.1.65), libmad0-dev, python2.4-dev, python-dev, python2.2-dev
-Standards-Version: 3.6.1
+Build-Depends: debhelper (>> 4.1.65), libmad0-dev, python2.4-dev, python2.3-dev
+Standards-Version: 3.6.2
 
 Package: python-pymad
 Architecture: all
@@ -13,15 +13,6 @@ Description: Python wrapper to the MPEG Audio Decoder library
  programs.  It provides a high-level API to the MAD functions, that make
  reading audio data from an MPEG stream simple.
 
-Package: python2.2-pymad
-Architecture: any
-Depends: ${python:Depends}, ${shlibs:Depends}
-Provides: python-pymad
-Description: Python wrapper to the MPEG Audio Decoder library
- This module makes the MAD MP3 decoder library available to Python
- programs.  It provides a high-level API to the MAD functions, that make
- reading audio data from an MPEG stream simple.
- 
 Package: python2.3-pymad
 Architecture: any
 Depends: ${python:Depends}, ${shlibs:Depends}
