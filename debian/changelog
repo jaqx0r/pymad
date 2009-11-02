@@ -1,3 +1,9 @@
+pymad (0.5.4-1) unstable; urgency=low
+
+  * New upstream version. 
+
+ -- Jamie Wilkinson <jaq@debian.org>  Thu, 30 Jun 2005 00:56:35 +1000
+
 pymad (0.5.3-2) unstable; urgency=low
 
   * Fix the specified replaced version of python-pymad.  (Closes: #306864)
