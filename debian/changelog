@@ -1,3 +1,9 @@
+pymad (0.6-1) unstable; urgency=low
+
+  * New upstream version.  (Closes: #543442)
+
+ -- Jamie Wilkinson <jaq@debian.org>  Mon, 02 Nov 2009 19:31:39 +1100
+
 pymad (0.5.4-3) unstable; urgency=low
 
   * Add build dependency on python.
@@ -16,7 +22,7 @@ pymad (0.5.4-2) unstable; urgency=low
 
 pymad (0.5.4-1) unstable; urgency=low
 
-  * New upstream version. 
+  * New upstream version.
 
  -- Jamie Wilkinson <jaq@debian.org>  Thu, 30 Jun 2005 00:56:35 +1000
 
@@ -31,7 +37,7 @@ pymad (0.5.3-1) unstable; urgency=low
   * New upstream release.
     + Fixes decode error on bigendian platforms.
   * Clean up diff.
-  * Add madradio.py as another example. 
+  * Add madradio.py as another example.
   * Build pymad modules for each python version.  (Closes: #299192)
 
  -- Jamie Wilkinson <jaq@debian.org>  Wed, 27 Apr 2005 20:17:17 +1000
@@ -87,13 +93,13 @@ pymad (0.4-1) unstable; urgency=low
 pymad (0.3-2) unstable; urgency=low
 
   * Bumped standards-version to 3.5.8.0.
-  * Set DH_COMPAT to 4. 
+  * Set DH_COMPAT to 4.
 
  -- Jamie Wilkinson <jaq@debian.org>  Sat, 30 Nov 2002 11:25:09 +1100
 
 pymad (0.3-1) unstable; urgency=low
-  
+
   * Initial Release.  (Closes: #161972)
-  
+
  -- Jamie Wilkinson <jaq@debian.org>  Sat, 28 Sep 2002 18:16:23 +1000
 
