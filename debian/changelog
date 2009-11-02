@@ -1,3 +1,18 @@
+pymad (0.5.4-3.2) unstable; urgency=low
+
+  * NMU based on 0.5.4-3.1 (removed python-support, not necessary).
+
+ -- Matthias Klose <doko@debian.org>  Tue, 11 Jul 2006 09:25:13 +0000
+
+pymad (0.5.4-3.1) unstable; urgency=low
+
+  * NMU.
+  * Updated to new Python Policy. (Closes: #373498)
+  * Bumped standards-version to 3.7.2, no changes required.
+  * Raised debhelper compat level to 5.
+
+ -- Ana Beatriz Guerrero Lopez <ana@ekaia.org>  Mon,  3 Jul 2006 00:13:45 +0200
+
 pymad (0.5.4-3) unstable; urgency=low
 
   * Add build dependency on python.
