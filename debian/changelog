@@ -1,3 +1,9 @@
+pymad (0.5.4-3) unstable; urgency=low
+
+  * Add build dependency on python.
+
+ -- Jamie Wilkinson <jaq@debian.org>  Tue,  4 Apr 2006 16:28:35 +1000
+
 pymad (0.5.4-2) unstable; urgency=low
 
   * Added watch file.
