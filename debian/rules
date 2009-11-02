@@ -9,7 +9,7 @@
 export DH_COMPAT=4
 
 PYTHON=python
-PYTHON_VERSIONS=2.4 2.3 2.2
+PYTHON_VERSIONS=2.4 2.3
 
 build: build-stamp
 build-stamp: $(patsubst %,build-stamp-%,$(PYTHON_VERSIONS))
