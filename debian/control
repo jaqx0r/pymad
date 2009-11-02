@@ -2,7 +2,7 @@ Source: pymad
 Section: python
 Priority: optional
 Maintainer: Jamie Wilkinson <jaq@debian.org>
-Build-Depends: debhelper (>> 4.1.65), libmad0-dev, python2.4-dev, python2.3-dev
+Build-Depends: debhelper (>> 4.1.65), libmad0-dev, python, python2.4-dev, python2.3-dev
 Standards-Version: 3.6.2
 
 Package: python-pymad
