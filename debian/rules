@@ -49,7 +49,7 @@ install-%: build-stamp-%
 		--skip-build \
 		--no-compile \
 		--prefix $(d)/usr
-
+		
 	-find $(d)/usr -name '.arch-ids' -print0 | xargs -0 rm -rf
 	-find $(d)/usr -name '.cvsignore' -print0 | xargs -0 rm -rf
 
