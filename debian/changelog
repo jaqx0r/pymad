@@ -1,3 +1,83 @@
+pymad (0.6-1) unstable; urgency=low
+
+  * New upstream version.  (Closes: #543442)
+  * Updated debhelper compat to 7.
+   - Move into debian/compat from DH_COMPAT.
+   - Update build dep.
+  * Update standards version to 3.8.3.
+
+ -- Jamie Wilkinson <jaq@debian.org>  Tue, 03 Nov 2009 21:55:36 +1100
+
+pymad (0.5.4-3.2) unstable; urgency=low
+
+  * NMU based on 0.5.4-3.1 (removed python-support, not necessary).
+
+ -- Matthias Klose <doko@debian.org>  Tue, 11 Jul 2006 09:25:13 +0000
+
+pymad (0.5.4-3.1) unstable; urgency=low
+
+  * NMU.
+  * Updated to new Python Policy. (Closes: #373498)
+  * Bumped standards-version to 3.7.2, no changes required.
+  * Raised debhelper compat level to 5.
+
+ -- Ana Beatriz Guerrero Lopez <ana@ekaia.org>  Mon,  3 Jul 2006 00:13:45 +0200
+
+pymad (0.5.4-3) unstable; urgency=low
+
+  * Add build dependency on python.
+
+ -- Jamie Wilkinson <jaq@debian.org>  Tue,  4 Apr 2006 16:28:35 +1000
+
+pymad (0.5.4-2) unstable; urgency=low
+
+  * Added watch file.
+  * Removed python2.2 package.  (Closes: #351135)
+  * Updated build dependency to specify python2.3-dev instead of python-dev.
+  * Bumped standards version to 3.6.2 (no other changes necessary).
+  * Updated FSF address in the copyright file.
+
+ -- Jamie Wilkinson <jaq@debian.org>  Tue,  4 Apr 2006 14:20:27 +1000
+
+pymad (0.5.4-1) unstable; urgency=low
+
+  * New upstream version.
+
+ -- Jamie Wilkinson <jaq@debian.org>  Thu, 30 Jun 2005 00:56:35 +1000
+
+pymad (0.5.3-2) unstable; urgency=low
+
+  * Fix the specified replaced version of python-pymad.  (Closes: #306864)
+
+ -- Jamie Wilkinson <jaq@debian.org>  Fri, 29 Apr 2005 10:55:56 +1000
+
+pymad (0.5.3-1) unstable; urgency=low
+
+  * New upstream release.
+    + Fixes decode error on bigendian platforms.
+  * Clean up diff.
+  * Add madradio.py as another example.
+  * Build pymad modules for each python version.  (Closes: #299192)
+
+ -- Jamie Wilkinson <jaq@debian.org>  Wed, 27 Apr 2005 20:17:17 +1000
+
+pymad (0.5.2-1) unstable; urgency=low
+
+  * New upstream release.
+    - Fixes exception handling for non-file file-like objects.
+  * Upstream uses arch; svn changelog removed.
+  * Bumped standards version to 3.6.1.
+
+ -- Jamie Wilkinson <jaq@debian.org>  Tue, 24 Aug 2004 12:52:24 +1000
+
+pymad (0.5.1-1) unstable; urgency=low
+
+  * New upstream release.
+    Thanks Josselin for the previous NMU.
+  * Including ChangeLog from svn repository.
+
+ -- Jamie Wilkinson <jaq@debian.org>  Tue, 30 Dec 2003 18:39:27 +1100
+
 pymad (0.4.1-1.1) unstable; urgency=low
 
   * NMU.
@@ -32,13 +112,13 @@ pymad (0.4-1) unstable; urgency=low
 pymad (0.3-2) unstable; urgency=low
 
   * Bumped standards-version to 3.5.8.0.
-  * Set DH_COMPAT to 4. 
+  * Set DH_COMPAT to 4.
 
  -- Jamie Wilkinson <jaq@debian.org>  Sat, 30 Nov 2002 11:25:09 +1100
 
 pymad (0.3-1) unstable; urgency=low
-  
+
   * Initial Release.  (Closes: #161972)
-  
+
  -- Jamie Wilkinson <jaq@debian.org>  Sat, 28 Sep 2002 18:16:23 +1000
 
