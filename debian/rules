@@ -5,42 +5,47 @@
 # Uncomment this to turn on verbose mode.
 #export DH_VERBOSE=1
 
-# This is the debhelper compatibility version to use.
-export DH_COMPAT=4
-
-PYTHON=python
-
-configure: configure-stamp
-configure-stamp:
-	dh_testdir
-	$(PYTHON) config_unix.py --prefix /usr
-	$(PYTHON) setup.py config
-	touch configure-stamp
+PYTHON_VERSIONS := $(shell pyversions -r debian/control)
 
 build: build-stamp
-build-stamp: configure-stamp 
+build-stamp:
 	dh_testdir
-	$(PYTHON) setup.py build
+
+	for py in $(PYTHON_VERSIONS); do \
+		$$py config_unix.py --prefix /usr; \
+		$$py setup.py build; \
+	done
+
 	touch build-stamp
 
 clean:
 	dh_testdir
 	dh_testroot
 	rm -f build-stamp configure-stamp
-	-$(PYTHON) setup.py clean --all
-	-rm Setup
+	for py in $(PYTHON_VERSIONS); do \
+		$$py config_unix.py --prefix /usr; \
+		$$py setup.py clean --all; \
+	done
+
+	rm -rf Setup build
 	dh_clean
 
 install: build
 	dh_testdir
 	dh_testroot
-	dh_clean -k
 	dh_installdirs
-	$(PYTHON) setup.py install --prefix $(CURDIR)/debian/python-pymad/usr
+
+	for py in $(PYTHON_VERSIONS); do \
+		$$py setup.py install  --skip-build  --no-compile --root=$(CURDIR)/debian/python-pymad; \
+	done
+
+	-find $(CURDIR)/debian/python-pymad/usr -name '.arch-ids' -print0 | xargs -0 rm -rf
+	-find $(CURDIR)/debian/python-pymad/usr -name '.cvsignore' -print0 | xargs -0 rm -rf
+	-find $(CURDIR)/debian/python-pymad/ -name '*.py[co]' -exec rm \{\} \;
+
 
 # Build architecture-independent files here.
 binary-indep: build install
-# We have nothing to do by default.
 
 # Build architecture-dependent files here.
 binary-arch: build install
@@ -48,18 +53,17 @@ binary-arch: build install
 	dh_testroot
 	dh_installdocs
 	dh_installexamples
-	dh_installchangelogs ChangeLog
+	dh_installchangelogs  NEWS
+	dh_python
 	dh_link
 	dh_strip
 	dh_compress
 	dh_fixperms
-	dh_makeshlibs -V
-	dh_python
 	dh_installdeb
 	dh_shlibdeps
 	dh_gencontrol
 	dh_md5sums
 	dh_builddeb
 
-binary: binary-indep binary-arch
+binary: binary-arch
 .PHONY: build clean binary-indep binary-arch binary install configure
