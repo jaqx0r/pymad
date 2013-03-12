@@ -1,4 +1,32 @@
 pymad - a Python wrapper for the MPEG Audio Decoder library
+===========================================================
+
+pymad is a Python module that allows Python programs to use the MPEG Audio Decoder library. pymad provides a high-level API, similar to the pyogg module, which makes reading PCM data from MPEG audio streams a piece of cake.
+
+Using pymad is as easy as:
+
+```python
+import mad, ao, sys
+
+mf = mad.MadFile(sys.argv[1])
+dev = ao.AudioDevice('oss', rate=mf.samplerate())
+while 1:
+    buf = mf.read()
+    if buf is None:
+        break
+    dev.play(buf, len(buf))
+```
+
+pymad uses the Python distutils tool. To build and install pymad, install python and libmad development files, and then:
+
+```shell
+# python config_unix.py --prefix /usr/local
+# python setup.py build
+# python setup.py install --prefix /usr/local
+```
+
+Remember to make sure `/usr/local/python/site-packages/` is in your Python search path.
+
 
 MAD is available at http://www.mars.org/home/rob/proj/mpeg/
 
