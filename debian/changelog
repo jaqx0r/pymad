@@ -1,3 +1,12 @@
+pymad (0.6-1.2) unstable; urgency=low
+
+  * Non-maintainer upload.
+  * Use python-support (closes: #620280).
+    + Add build-dependency on python-support.
+    + In debian/rules, replace call to dh_python with dh_pysupport.
+
+ -- Jakub Wilk <jwilk@debian.org>  Fri, 08 Apr 2011 21:05:01 +0200
+
 pymad (0.6-1.1) unstable; urgency=low
 
   * Non-maintainer upload.

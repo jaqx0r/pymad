@@ -56,7 +56,7 @@ binary-arch: build install
 	dh_installdocs
 	dh_installexamples
 	dh_installchangelogs  NEWS
-	dh_python
+	dh_pysupport
 	dh_link
 	dh_strip
 	dh_compress
