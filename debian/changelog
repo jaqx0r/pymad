@@ -1,12 +1,33 @@
+pymad (0.6-1.2) unstable; urgency=low
+
+  * Non-maintainer upload.
+  * Use python-support (closes: #620280).
+    + Add build-dependency on python-support.
+    + In debian/rules, replace call to dh_python with dh_pysupport.
+
+ -- Jakub Wilk <jwilk@debian.org>  Fri, 08 Apr 2011 21:05:01 +0200
+
+pymad (0.6-1.1) unstable; urgency=low
+
+  * Non-maintainer upload.
+  * Prepare for the upcoming Python 2.6 transition; thanks to Piotr Ożarowski
+    for the bug report and to Kumar Appaiah for the patch; Closes: #556153
+    - debian/rules
+      + optionally include python.mk, add $(py_setup_install_args) and
+        --prefix=/usr when installing
+
+ -- Sandro Tosi <morph@debian.org>  Sun, 15 Nov 2009 22:03:08 +0100
+
 pymad (0.6-1) unstable; urgency=low
 
-  * New upstream version.  (Closes: #543442)
+  * New upstream version.  (Closes: #543442, #306757)
   * Updated debhelper compat to 7.
    - Move into debian/compat from DH_COMPAT.
    - Update build dep.
   * Update standards version to 3.8.3.
+  * Fix copyright in debian/copyright.
 
- -- Jamie Wilkinson <jaq@debian.org>  Tue, 03 Nov 2009 21:55:36 +1100
+ -- Jamie Wilkinson <jaq@debian.org>  Tue, 03 Nov 2009 22:03:24 +1100
 
 pymad (0.5.4-3.2) unstable; urgency=low
 
