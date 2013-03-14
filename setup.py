@@ -2,7 +2,10 @@
 
 """Setup script for the MAD module distribution."""
 
-import os, re, sys, string
+import os
+import re
+import string
+import sys
 
 from distutils.core import setup
 from distutils.extension import Extension
