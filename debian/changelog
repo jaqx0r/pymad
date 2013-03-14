@@ -4,8 +4,9 @@ pymad (0.7-1) unstable; urgency=low
   * Acknowledge NMUs.  Thanks Jakub and Sandro! (Closes: #620280, #556153)
   * Update debian/watch with new URI for tarball.
   * Updated standards version to 3.9.2 
+  * Transition from pysupprt to dh_python2. 
 
- -- Jamie Wilkinson <jaq@debian.org>  Thu, 14 Mar 2013 07:52:36 +0000
+ -- Jamie Wilkinson <jaq@debian.org>  Thu, 14 Mar 2013 09:11:19 +0000
 
 pymad (0.6-1.2) unstable; urgency=low
 
