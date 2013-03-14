@@ -1,11 +1,18 @@
 #! /usr/bin/env python
 
-import sys, os.path
+import glob
+import os.path
+import socket
+import sys
+import urlparse
 
-sys.path.insert(0, "build/lib.linux-ppc-2.3")
+import ao
 
-import socket, urlparse
-import mad, ao
+for p in glob.glob("build/lib.*"):
+    sys.path.insert(0, p)
+
+import mad
+
 
 def madradio(url):
     scheme, netloc, path, params, query, fragment = urlparse.urlparse(url)
@@ -24,7 +31,7 @@ def madradio(url):
     mf = mad.MadFile(file)
     print "bitrate %lu bps" % mf.bitrate()
     print "samplerate %d Hz" % mf.samplerate()
-    dev = ao.AudioDevice('oss', bits=16, rate=mf.samplerate())
+    dev = ao.AudioDevice(0, rate=mf.samplerate())
     while True:
         buffy = mf.read()
         if buffy is None:
@@ -37,5 +44,6 @@ if __name__ == '__main__':
         url = sys.argv[1]
     except IndexError:
         #url = 'http://62.67.195.6:8000' # lounge-radio.com
-        url = 'http://63.241.4.18:8069' # xtcradio.com
+        #url = 'http://63.241.4.18:8069' # xtcradio.com
+        url = 'http://mp2.somafm.com:2040' # somafm
     madradio(url)

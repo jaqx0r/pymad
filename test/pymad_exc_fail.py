@@ -1,12 +1,22 @@
 #! /usr/bin/python
 
+import glob
+import os.path
 import sys
+import StringIO
+import urllib
 
-sys.path.insert(0, "build/lib.linux-ppc-2.3")
+import ao
 
-import mad, StringIO
+for p in glob.glob("build/lib.*"):
+    sys.path.insert(0, p)
 
-data = StringIO.StringIO(open("foo.mp3","r").read())
+print sys.path
+
+import mad
+
+
+data = StringIO.StringIO(open("/home/jaq/foo.mp3","r").read())
 m = mad.MadFile(data)
 print "MadFile returned"
 for x in (1,2): pass
