@@ -4,7 +4,7 @@ Priority: optional
 Maintainer: Jamie Wilkinson <jaq@debian.org>
 Build-Depends: debhelper (>= 7), python-all-dev (>= 2.3.5-11), libmad0-dev, python-support
 XS-Python-Version: all
-Standards-Version: 3.8.3
+Standards-Version: 3.9.2
 
 Package: python-pymad
 Architecture: any
