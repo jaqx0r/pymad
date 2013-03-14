@@ -1,3 +1,11 @@
+pymad (0.7-1) unstable; urgency=low
+
+  * New upstream version.
+  * Acknowledge NMUs.  Thanks Jakub and Sandro! (Closes: #620280, #556153)
+  * Update debian/watch with new URI for tarball.
+
+ -- Jamie Wilkinson <jaq@debian.org>  Thu, 14 Mar 2013 07:49:28 +0000
+
 pymad (0.6-1.2) unstable; urgency=low
 
   * Non-maintainer upload.
