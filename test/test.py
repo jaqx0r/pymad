@@ -1,13 +1,18 @@
 #!/usr/bin/python
 
-import sys, os.path, ao
+import glob
+import os.path
+import sys
+import urllib
 
-sys.path.insert(0, "build/lib.linux-ppc-2.3")
+import ao
+
+for p in glob.glob("build/lib.*"):
+    sys.path.insert(0, p)
 
 print sys.path
 
 import mad
-import urllib
 
 def play(u):
     mf = mad.MadFile(u)
@@ -43,11 +48,12 @@ def play(u):
         
     print "bitrate %lu bps" % mf.bitrate()
     print "samplerate %d Hz" % mf.samplerate()
+    sys.stdout.flush()
     #millis = mf.total_time()
     #secs = millis / 1000
     #print "total time %d ms (%dm%2ds)" % (millis, secs / 60, secs % 60)
         
-    dev = ao.AudioDevice('oss', bits=16, rate=mf.samplerate())
+    dev = ao.AudioDevice(0, rate=mf.samplerate())
     while 1:
         buffy = mf.read()
         if buffy is None:

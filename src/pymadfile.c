@@ -289,7 +289,8 @@ static PyObject *
 py_madfile_read(PyObject * self, PyObject * args) {
     PyObject * pybuf;    /* return object containing output buffer*/
     char * buffy; /* output buffer */
-    unsigned int i, size;
+    unsigned int i;
+    Py_ssize_t size;
     int nextframe = 0;
     int result;
     char errmsg[ERROR_MSG_SIZE];
@@ -312,7 +313,7 @@ py_madfile_read(PyObject * self, PyObject * args) {
 	 * it's the first execution on this file */
 	if ((MAD_STREAM(self).buffer == NULL) ||
 	    (MAD_STREAM(self).error == MAD_ERROR_BUFLEN)) {
-	    size_t readsize, remaining;
+	    Py_ssize_t readsize, remaining;
 	    unsigned char * readstart;
             PyObject *o_read;
             char * o_buffer;
@@ -452,7 +453,7 @@ py_madfile_read(PyObject * self, PyObject * args) {
      * so make it 4 times as big as the number of samples */
     size = MAD_SYNTH(self).pcm.length * 4;
     pybuf = PyBuffer_New(size);
-    PyObject_AsWriteBuffer(pybuf, &buffy, &size);
+    PyObject_AsWriteBuffer(pybuf, (void*)&buffy, &size);
 
     /* die if we don't have the space */
     if (size < MAD_SYNTH(self).pcm.length * 4) {

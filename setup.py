@@ -2,13 +2,16 @@
 
 """Setup script for the MAD module distribution."""
 
-import os, re, sys, string
+import os
+import re
+import string
+import sys
 
 from distutils.core import setup
 from distutils.extension import Extension
 
 VERSION_MAJOR = 0
-VERSION_MINOR = 6
+VERSION_MINOR = 7
 pymad_version = str(VERSION_MAJOR) + "." + str(VERSION_MINOR)
 
 def get_setup():
