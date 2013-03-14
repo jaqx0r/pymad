@@ -1,2 +1,2 @@
 version=3
-http://spacepants.org/src/pymad/download/pymad-(.*)\.tar\.gz debian uupdate
+http://code.google.com/p/pymad/downloads/list .*/pymad-(.*)\.tar\.gz debian
