@@ -6,8 +6,9 @@ pymad (0.7-1) unstable; urgency=low
   * Updated standards version to 3.9.2 
   * Transition from pysupprt to dh_python2. 
   * Fix debhelper misc:depends to appease lintian. 
+  * Remove obsolete cleanup from debian/rules. 
 
- -- Jamie Wilkinson <jaq@debian.org>  Thu, 14 Mar 2013 09:17:26 +0000
+ -- Jamie Wilkinson <jaq@debian.org>  Thu, 14 Mar 2013 09:19:26 +0000
 
 pymad (0.6-1.2) unstable; urgency=low
 

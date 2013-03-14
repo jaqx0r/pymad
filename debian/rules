@@ -41,10 +41,6 @@ install: build
 		$$py setup.py install  --skip-build  --no-compile --root=$(CURDIR)/debian/python-pymad --prefix=/usr $(py_setup_install_args); \
 	done
 
-	-find $(CURDIR)/debian/python-pymad/usr -name '.arch-ids' -print0 | xargs -0 rm -rf
-	-find $(CURDIR)/debian/python-pymad/usr -name '.cvsignore' -print0 | xargs -0 rm -rf
-	-find $(CURDIR)/debian/python-pymad/ -name '*.py[co]' -exec rm \{\} \;
-
 
 # Build architecture-independent files here.
 binary-indep: build install
