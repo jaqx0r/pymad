@@ -7,6 +7,7 @@ pymad (0.8-1) unstable; urgency=medium
   * Rewrote debian/rules to use pybuild best practice for python
     libraries.
   * Updated watch file to point to new upstream home in github.
+  * Added source/format to specify quilt 3.0.
 
  -- Jamie Wilkinson <jaq@debian.org>  Tue, 03 Mar 2015 13:59:33 +1100
 
