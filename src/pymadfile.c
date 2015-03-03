@@ -581,6 +581,10 @@ py_madfile_seek_time(PyObject * self, PyObject * args) {
     }
     Py_DECREF(o);
 
+    mad_stream_init(&MAD_STREAM(self));
+    mad_frame_init(&MAD_FRAME(self));
+    mad_synth_init(&MAD_SYNTH(self));
+    mad_timer_reset(&MAD_TIMER(self));
     mad_timer_set(&MAD_TIMER(self), 0, pos, 1000);
 
     return Py_None;
