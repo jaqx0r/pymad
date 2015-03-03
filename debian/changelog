@@ -1,3 +1,9 @@
+pymad (0.8-1) unstable; urgency=medium
+
+  * New upstream release. 
+
+ -- Jamie Wilkinson <jaq@debian.org>  Tue, 03 Mar 2015 13:59:33 +1100
+
 pymad (0.7-1) unstable; urgency=low
 
   * New upstream version.
