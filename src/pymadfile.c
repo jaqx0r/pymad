@@ -389,9 +389,10 @@ static PyObject *py_madfile_read(PyObject *self, PyObject *args) {
      * this case one can call again mad_frame_decode() in order to
      * skip the faulty part and resync to the next frame.
      */
-    Py_BEGIN_ALLOW_THREADS result =
-        mad_frame_decode(&MAD_FRAME(self), &MAD_STREAM(self));
-    Py_END_ALLOW_THREADS if (result) {
+    Py_BEGIN_ALLOW_THREADS;
+    result = mad_frame_decode(&MAD_FRAME(self), &MAD_STREAM(self));
+    Py_END_ALLOW_THREADS;
+    if (result) {
       if (MAD_RECOVERABLE(MAD_STREAM(self).error)) {
         /* FIXME: prefer to return an error string to the caller
          * rather than print to stderr
