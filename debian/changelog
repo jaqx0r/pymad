@@ -3,6 +3,7 @@ pymad (0.8-1) unstable; urgency=medium
   * New upstream release. 
   * Bump standards version to 3.9.6. 
   * Add token build-{arch,indep} targets to debian/rules. 
+  * Add build-dep on dh-python.
 
  -- Jamie Wilkinson <jaq@debian.org>  Tue, 03 Mar 2015 13:59:33 +1100
 
