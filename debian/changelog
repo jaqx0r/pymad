@@ -8,6 +8,7 @@ pymad (0.8-1) unstable; urgency=medium
     libraries.
   * Updated watch file to point to new upstream home in github.
   * Added source/format to specify quilt 3.0.
+  * Ignore Setup file after build in debian/source/options.
 
  -- Jamie Wilkinson <jaq@debian.org>  Tue, 03 Mar 2015 13:59:33 +1100
 
