@@ -15,6 +15,6 @@
 #include <Python.h>
 
 /* module accessible functions */
-PyObject * py_madfile_new(PyObject *, PyObject *);
+PyObject *py_madfile_new(PyObject *, PyObject *);
 
 #endif /* __MADMODULE_H__ */

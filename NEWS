@@ -1,6 +1,14 @@
 NEWS for pymad
 ==============
 
+0.8
+---
+
+2015-03-03
+
+ * Reinitialize buffers after seeks to prevent decoding and output of
+   partial content prior to the seek.  (Markus Demleitner)
+
 0.6
 ---
 
