@@ -9,7 +9,9 @@ PYTHON_VERSIONS := $(shell pyversions -r debian/control)
 
 -include /usr/share/python/python.mk
 
-build: build-stamp
+build: build-arch build-indep
+build-arch: build-stamp
+build-indep: build-stamp
 build-stamp:
 	dh_testdir
 
