@@ -25,23 +25,23 @@
 #include "mad.h"
 
 struct xing {
-    long flags;             /* valid fields (see below) */
-    unsigned long frames;   /* total number of frames */
-    unsigned long bytes;    /* total number of bytes */
-    unsigned char toc[100]; /* 100-point seek table */
-    long scale;             /* ?? */
+  long flags;             /* valid fields (see below) */
+  unsigned long frames;   /* total number of frames */
+  unsigned long bytes;    /* total number of bytes */
+  unsigned char toc[100]; /* 100-point seek table */
+  long scale;             /* ?? */
 };
 
 enum {
-    XING_FRAMES = 0x00000001L,
-    XING_BYTES  = 0x00000002L,
-    XING_TOC    = 0x00000004L,
-    XING_SCALE  = 0x00000008L
+  XING_FRAMES = 0x00000001L,
+  XING_BYTES = 0x00000002L,
+  XING_TOC = 0x00000004L,
+  XING_SCALE = 0x00000008L
 };
 
 void xing_init(struct xing *);
 
-#define xing_finish(xing)  /* nothing */
+#define xing_finish(xing) /* nothing */
 
 int xing_parse(struct xing *, struct mad_bitptr, unsigned int);
 
