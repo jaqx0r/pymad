@@ -137,10 +137,10 @@ PyObject * py_madfile_new(PyObject * self, PyObject * args) {
     mf->close_file = close_file;
 
     /* initialise the mad structs */
-    mad_stream_init(&mf->stream);
-    mad_frame_init(&mf->frame);
-    mad_synth_init(&mf->synth);
-    mad_timer_reset(&mf->timer);
+    mad_stream_init(&MAD_STREAM(mf));
+    mad_frame_init(&MAD_FRAME(mf));
+    mad_synth_init(&MAD_SYNTH(mf));
+    mad_timer_reset(&MAD_TIMER(mf));
   
     mf->framecount = 0;
 
