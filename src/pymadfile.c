@@ -417,29 +417,29 @@ static PyObject *py_madfile_read(PyObject *self, PyObject *args) {
 
   } while (nextframe);
 
-  Py_BEGIN_ALLOW_THREADS
+  Py_BEGIN_ALLOW_THREADS;
 
-      /* Accounting.  The computed frame duration is in the frame header
-       * structure.  It is expressed as a fixed point number whose data
-       * type is mad_timer_t.  It is different from the fixed point
-       * format of the samples and unlike it, cannot be directly added
-       * or subtracted.  The timer module provides several functions to
-       * operate on such numbers.  Be careful though, as some functions
-       * of mad's timer module receive their mad_timer_t arguments by
-       * value! */
-      PY_MADFILE(self)->framecount++;
+  /* Accounting.  The computed frame duration is in the frame header
+   * structure.  It is expressed as a fixed point number whose data
+   * type is mad_timer_t.  It is different from the fixed point
+   * format of the samples and unlike it, cannot be directly added
+   * or subtracted.  The timer module provides several functions to
+   * operate on such numbers.  Be careful though, as some functions
+   * of mad's timer module receive their mad_timer_t arguments by
+   * value! */
+  PY_MADFILE(self)->framecount++;
   mad_timer_add(&MAD_TIMER(self), MAD_FRAME(self).header.duration);
 
   /* Once decoded, the frame can be synthesised to PCM samples.
    * No errors are reported by mad_synth_frame() */
   mad_synth_frame(&MAD_SYNTH(self), &MAD_FRAME(self));
 
-  Py_END_ALLOW_THREADS
+  Py_END_ALLOW_THREADS;
 
-      /* Create the buffer to store the PCM samples in, so python can
-       * use it.  We do 4 pointer increments per sample in the buffer,
-       * so make it 4 times as big as the number of samples */
-      size = MAD_SYNTH(self).pcm.length * 4;
+  /* Create the buffer to store the PCM samples in, so python can
+   * use it.  We do 4 pointer increments per sample in the buffer,
+   * so make it 4 times as big as the number of samples */
+  size = MAD_SYNTH(self).pcm.length * 4;
   pybuf = PyBuffer_New(size);
   PyObject_AsWriteBuffer(pybuf, (void *)&buffy, &size);
 
@@ -449,13 +449,13 @@ static PyObject *py_madfile_read(PyObject *self, PyObject *args) {
     return NULL;
   }
 
-  Py_BEGIN_ALLOW_THREADS
+  Py_BEGIN_ALLOW_THREADS;
 
-      /* Synthesised samples must be converted from mad's fixed point
-       * format to the consumer format.  Here we use signed 16 bit
-       * big endian ints on two channels.  Integer samples are
-       * temporarily stored in a buffer that is flushed when full. */
-      for (i = 0; i < MAD_SYNTH(self).pcm.length; i++) {
+  /* Synthesised samples must be converted from mad's fixed point
+   * format to the consumer format.  Here we use signed 16 bit
+   * big endian ints on two channels.  Integer samples are
+   * temporarily stored in a buffer that is flushed when full. */
+  for (i = 0; i < MAD_SYNTH(self).pcm.length; i++) {
     signed short sample;
 
     /* left channel */
@@ -473,7 +473,7 @@ static PyObject *py_madfile_read(PyObject *self, PyObject *args) {
      * is the same as the left one */
     if (MAD_NCHANNELS(&MAD_FRAME(self).header) == 2)
       sample = madfixed_to_short(MAD_SYNTH(self).pcm.samples[1][i]);
-#ifdef BIGENDIAN
+#ifdef Bigendian
     *(buffy++) = sample >> 8;
     *(buffy++) = sample & 0xFF;
 #else
@@ -482,9 +482,9 @@ static PyObject *py_madfile_read(PyObject *self, PyObject *args) {
 #endif
   }
 
-  Py_END_ALLOW_THREADS
+  Py_END_ALLOW_THREADS;
 
-      return pybuf;
+  return pybuf;
 }
 
 /* return the MPEG layer */
