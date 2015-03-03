@@ -3,7 +3,7 @@ Section: python
 Priority: optional
 Maintainer: Jamie Wilkinson <jaq@debian.org>
 Build-Depends: debhelper (>= 7), python-all-dev (>= 2.6.6-3~), libmad0-dev
-Standards-Version: 3.9.2
+Standards-Version: 3.9.6
 
 Package: python-pymad
 Architecture: any
