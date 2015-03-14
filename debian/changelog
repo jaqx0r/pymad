@@ -1,8 +1,8 @@
-pymad (0.8-2) UNRELEASED; urgency=medium
+pymad (0.8-2) unstable; urgency=medium
 
   * Fix the pre-configure command to build Setup correctly.  (Closes: #779634) 
 
- -- Jamie Wilkinson <jaq@debian.org>  Sat, 14 Mar 2015 22:15:42 +1100
+ -- Jamie Wilkinson <jaq@debian.org>  Sat, 14 Mar 2015 22:18:45 +1100
 
 pymad (0.8-1) unstable; urgency=medium
 
