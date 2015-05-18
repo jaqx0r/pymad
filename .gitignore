@@ -11,3 +11,4 @@ debian/python-pymad.substvars
 debian/python-pymad
 .pybuild
 madmodule.so
+*.pyc
