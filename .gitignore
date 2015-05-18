@@ -10,3 +10,4 @@ debian/python-pymad.prerm.debhelper
 debian/python-pymad.substvars
 debian/python-pymad
 .pybuild
+madmodule.so
