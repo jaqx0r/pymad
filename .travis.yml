@@ -1,0 +1,7 @@
+language: python
+install:
+ - travis_retry sudo apt-get update -qq
+ - travis_retry sudo apt-get install -y python-all-dev libmad0-dev python-setuptools
+ - python config_unix.py --prefix /usr/local
+script:
+ - python setup.py install --prefix /usr/local
