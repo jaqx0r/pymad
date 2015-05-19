@@ -1,3 +1,9 @@
+pymad (0.8-4) unstable; urgency=medium
+
+  * Add control fields for VCS information. 
+
+ -- Jamie Wilkinson <jaq@debian.org>  Wed, 20 May 2015 08:39:30 +1000
+
 pymad (0.8-3) unstable; urgency=medium
 
   * Change the rules to generate the Setup file BEFORE_CLEAN, instead
