@@ -5,7 +5,7 @@
 # Uncomment this to turn on verbose mode.
 #export DH_VERBOSE=1
 export PYBUILD_NAME=pymad
-export PYBUILD_BEFORE_CONFIGURE={interpreter} ./config_unix.py --prefix=/usr
+export PYBUILD_BEFORE_CLEAN={interpreter} ./config_unix.py --prefix=/usr
 
 %:
 	dh $@ --with=python2 --buildsystem=pybuild
