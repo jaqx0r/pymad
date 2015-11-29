@@ -19,7 +19,7 @@ def get_setup():
     r = re.compile(r'(\S+)\s*=\s*(.+)')
     
     if not os.path.isfile('Setup'):
-        print "No 'Setup' file. Perhaps you need to run the configure script."
+        print("No 'Setup' file. Perhaps you need to run the configure script.")
         sys.exit(1)
         
     f = open('Setup', 'r')
@@ -27,7 +27,7 @@ def get_setup():
     for line in f.readlines():
         m = r.search(line)
         if not m:
-            print "Error in setup file:", line
+            print("Error in setup file:", line)
             sys.exit(1)
         key = m.group(1)
         val = m.group(2)
