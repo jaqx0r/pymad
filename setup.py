@@ -4,7 +4,6 @@
 
 import os
 import re
-import string
 import sys
 
 from distutils.core import setup
@@ -50,7 +49,7 @@ madmodule = Extension(
     define_macros = defines,
     include_dirs=[data['mad_include_dir']],
     library_dirs=[data['mad_lib_dir']],
-    libraries=string.split(data['mad_libs']))
+    libraries=data['mad_libs'].split())
 
 setup ( # Distribution metadata
     name = "pymad",
