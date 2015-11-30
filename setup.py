@@ -44,7 +44,7 @@ if data['endian'] == "big":
     defines.append(('BIGENDIAN', 1))
 
 madmodule = Extension(
-    name='madmodule',
+    name='mad',
     sources=['src/madmodule.c', 'src/pymadfile.c', 'src/xing.c'],
     define_macros = defines,
     include_dirs=[data['mad_include_dir']],
