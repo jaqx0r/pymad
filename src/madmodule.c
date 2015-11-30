@@ -34,9 +34,13 @@ static PyMethodDef mad_methods[] = {
   #define PY_CONST(x) PyDict_SetItemString(dict, #x, PyInt_FromLong(MAD_##x))
 #endif
 
+extern PyTypeObject py_madfile_t;
 
 static PyObject *moduleinit(void) {
   PyObject *module, *dict;
+
+  if (PyType_Ready(&py_madfile_t) < 0)
+    return NULL;
 
   MOD_DEF(module, "mad", "", mad_methods);
   dict = PyModule_GetDict(module);
