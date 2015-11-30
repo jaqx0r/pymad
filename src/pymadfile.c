@@ -49,6 +49,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <errno.h>
+#include <fcntl.h>
 #include <string.h>
 #include <sys/stat.h>
 #include <sys/mman.h>
@@ -61,6 +62,20 @@
 #define PyObject_DEL(op) PyMem_DEL((op))
 #endif
 
+#ifndef PyVarObject_HEAD_INIT
+  #define PyVarObject_HEAD_INIT(type, size) \
+    PyObject_HEAD_INIT(type) size,
+#endif
+
+#if PY_MAJOR_VERSION >= 3
+    #define MADFILE_GETATTR 0
+    #define PyInt_FromLong PyLong_FromLong
+    #define PyInt_AsLong PyLong_AsLong
+# else
+    #define MADFILE_GETATTR (getattrfunc)py_madfile_getattr
+    #define PyBytes_AsStringAndSize PyString_AsStringAndSize
+#endif
+
 #define ERROR_MSG_SIZE 512
 #define MAD_BUF_SIZE                                                           \
   (5 * 8192) /* should be a multiple of 4 >= 4096 and large enough to capture  \
@@ -71,23 +86,64 @@
 static unsigned long calc_total_time(PyObject *);
 static signed short int madfixed_to_short(mad_fixed_t);
 
-PyTypeObject py_madfile_t = {PyObject_HEAD_INIT(&PyType_Type)0, "MadFile",
-                             sizeof(py_madfile),                0,
-                             /* standard methods */
-                             (destructor)py_madfile_dealloc,    (printfunc)0,
-                             (getattrfunc)py_madfile_getattr,   (setattrfunc)0,
-                             (cmpfunc)0,                        (reprfunc)0,
-                             /* type categories */
-                             0, /* as number */
-                             0, /* as sequence */
-                             0, /* as mapping */
-                             0, /* hash */
-                             0, /* binary */
-                             0, /* repr */
-                             0, /* getattro */
-                             0, /* setattro */
-                             0, /* as buffer */
+static PyMethodDef madfile_methods[] = {
+    {"read", py_madfile_read, METH_VARARGS, ""},
+    {"layer", py_madfile_layer, METH_VARARGS, ""},
+    {"mode", py_madfile_mode, METH_VARARGS, ""},
+    {"samplerate", py_madfile_samplerate, METH_VARARGS, ""},
+    {"bitrate", py_madfile_bitrate, METH_VARARGS, ""},
+    {"emphasis", py_madfile_emphasis, METH_VARARGS, ""},
+    {"total_time", py_madfile_total_time, METH_VARARGS, ""},
+    {"current_time", py_madfile_current_time, METH_VARARGS, ""},
+    {"seek_time", py_madfile_seek_time, METH_VARARGS, ""},
+    {NULL, 0, 0, NULL}};
+
+PyTypeObject py_madfile_t = {PyVarObject_HEAD_INIT(&PyType_Type, 0)
+                             "MadFile", /* tp_name */
+                             sizeof(py_madfile), /* tp_basicsize */
+                             0, /* tp_itemsize */
+                             (destructor)py_madfile_dealloc, /* tp_dealloc */
+                             0, /* (tp_print) */
+                             0, /* (tp_getattr) */
+                             0, /* (tp_setattr) */
+                             0, /* (tp_reserved) [was tp_compare] */
+                             0, /* tp_repr */
+                             0, /* tp_as_number */
+                             0, /* tp_as_sequence */
+                             0, /* tp_as_mapping */
+                             0, /* tp_hash */
+                             0, /* tp_call */
+                             0, /* tp_str */
+                             0, /* tp_getattro */
+                             0, /* tp_setattro */
+                             0, /* tp_as_buffer */
                              0, /* tp_flags */
+                             0, /* tp_doc */
+                             0, /* tp_traverse */
+                             0, /* tp_clear */
+                             0, /* tp_richcompare */
+                             0, /* tp_weaklistoffset */
+                             0, /* tp_iter */
+                             0, /* tp_iternext */
+                             madfile_methods, /* tp_methods */
+                             0, /* tp_members */
+                             0, /* tp_getset */
+                             0, /* tp_base */
+                             0, /* tp_dict */
+                             0, /* tp_descr_get */
+                             0, /* tp_descr_set */
+                             0, /* tp_dictoffset */
+                             0, /* tp_init */
+                             0, /* tp_alloc */
+                             0, /* tp_new */
+                             0, /* tp_free */
+                             0, /* tp_is_gc */
+                             0, /* tp_bases */
+                             0, /* tp_mro */
+                             0, /* tp_cache */
+                             0, /* tp_subclasses */
+                             0, /* tp_weaklist */
+                             0, /* tp_del */
                              NULL};
 
 /* functions */
@@ -95,6 +151,7 @@ PyTypeObject py_madfile_t = {PyObject_HEAD_INIT(&PyType_Type)0, "MadFile",
 PyObject *py_madfile_new(PyObject *self, PyObject *args) {
   py_madfile *mf = NULL;
   int close_file = 0;
+  int fd;
   char *fname;
   PyObject *fobject = NULL;
   char *initial;
@@ -103,7 +160,14 @@ PyObject *py_madfile_new(PyObject *self, PyObject *args) {
   int n;
 
   if (PyArg_ParseTuple(args, "s|l:MadFile", &fname, &bufsiz)) {
-    fobject = PyFile_FromString(fname, "r");
+    #if PY_MAJOR_VERSION < 3
+      fobject = PyFile_FromString(fname, "r");
+    #else
+      if ((fd = open(fname, O_RDONLY)) < 0) {
+        return NULL;
+      }
+      fobject = PyFile_FromFd(fd, fname, "r", -1, NULL, NULL, NULL, 1);
+    #endif
     close_file = 1;
     if (fobject == NULL) {
       return NULL;
@@ -281,7 +345,7 @@ static signed short int madfixed_to_short(mad_fixed_t sample) {
 
 static PyObject *py_madfile_read(PyObject *self, PyObject *args) {
   PyObject *pybuf; /* return object containing output buffer*/
-  char *buffy;     /* output buffer */
+  char *buffy = NULL; /* output buffer */
   unsigned int i;
   Py_ssize_t size;
   int nextframe = 0;
@@ -344,7 +408,7 @@ static PyObject *py_madfile_read(PyObject *self, PyObject *args) {
         Py_INCREF(Py_None);
         return Py_None;
       }
-      PyString_AsStringAndSize(o_read, &o_buffer, &readsize);
+      PyBytes_AsStringAndSize(o_read, &o_buffer, &readsize);
       // EOF?
       if (readsize == 0) {
         Py_DECREF(o_read);
@@ -441,8 +505,13 @@ static PyObject *py_madfile_read(PyObject *self, PyObject *args) {
    * use it.  We do 4 pointer increments per sample in the buffer,
    * so make it 4 times as big as the number of samples */
   size = MAD_SYNTH(self).pcm.length * 4;
-  pybuf = PyBuffer_New(size);
-  PyObject_AsWriteBuffer(pybuf, (void *)&buffy, &size);
+
+  #if PY_MAJOR_VERSION < 3
+    pybuf = PyBuffer_New(size);
+    PyObject_AsWriteBuffer(pybuf, (void *)&buffy, &size);
+  #else
+    pybuf = PyBytes_FromStringAndSize(buffy, size);
+  #endif
 
   /* die if we don't have the space */
   if (size < MAD_SYNTH(self).pcm.length * 4) {
@@ -569,22 +638,4 @@ static PyObject *py_madfile_seek_time(PyObject *self, PyObject *args) {
   mad_timer_set(&MAD_TIMER(self), 0, pos, 1000);
 
   return Py_None;
-}
-
-/* housekeeping */
-
-static PyMethodDef madfile_methods[] = {
-    {"read", py_madfile_read, METH_VARARGS, ""},
-    {"layer", py_madfile_layer, METH_VARARGS, ""},
-    {"mode", py_madfile_mode, METH_VARARGS, ""},
-    {"samplerate", py_madfile_samplerate, METH_VARARGS, ""},
-    {"bitrate", py_madfile_bitrate, METH_VARARGS, ""},
-    {"emphasis", py_madfile_emphasis, METH_VARARGS, ""},
-    {"total_time", py_madfile_total_time, METH_VARARGS, ""},
-    {"current_time", py_madfile_current_time, METH_VARARGS, ""},
-    {"seek_time", py_madfile_seek_time, METH_VARARGS, ""},
-    {NULL, 0, 0, NULL}};
-
-static PyObject *py_madfile_getattr(PyObject *self, char *name) {
-  return Py_FindMethod(madfile_methods, self, name);
 }
