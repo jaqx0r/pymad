@@ -5,11 +5,11 @@ import os
 import sys
 
 def msg_checking(msg):
-    print "Checking", msg, "...",
+    print("Checking", msg, "...")
 
 def execute(cmd, display = 0):
     if display:
-        print cmd
+        print(cmd)
     return os.system(cmd)
 
 def run_test(input, flags = ''):
@@ -55,14 +55,14 @@ def find_mad(mad_prefix = '/usr/local', enable_madtest = 1):
         try:
             run_test(mad_test_program, flags="-I" + mad_include_dir)
             if not os.path.isfile('conf.madtest'):
-                raise RuntimeError, "Did not produce output"
+                raise RuntimeError("Did not produce output")
             execute('rm conf.madtest', 0)
             
         except:
-            print "test program failed"
+            print("test program failed")
             return None
 
-    print "success"
+    print("success")
 
     return {'mad_libs' : mad_libs,
             'mad_lib_dir' : mad_lib_dir,
@@ -105,13 +105,13 @@ def check_endian(enable_endiantest = 1):
             elif os.path.isfile("big.endiantest"):
                 bigendian = 1
             else:
-                raise RuntimeError, "Did not produce output"
+                raise RuntimeError("Did not produce output")
             execute("rm -f little.endiantest big.endiantest", 0)
         except:
-            print "test program failed"
+            print("test program failed")
             return None
 
-    print "success"
+    print("success")
 
     return bigendian
             
@@ -121,11 +121,11 @@ def write_data(data):
     for item in data.items():
         f.write('%s = %s\n' % item)
     f.close()
-    print "Wrote Setup file"
+    print("Wrote Setup file")
             
 def print_help():
-    print '''%s
-    --prefix      Give the prefix in which MAD was installed.''' % sys.argv[0]
+    print('''%s
+    --prefix      Give the prefix in which MAD was installed.''' % sys.argv[0])
     sys.exit(0)
 
 def parse_args():
@@ -137,7 +137,7 @@ def parse_args():
         if argv[pos] == '--prefix':
             pos = pos + 1
             if len(argv) == pos:
-                print "Prefix needs an argument"
+                print("Prefix needs an argument")
                 sys.exit(1)
             data['prefix'] = argv[pos]
 
@@ -149,7 +149,7 @@ def main():
 
     data = find_mad(mad_prefix = prefix)
     if not data:
-        print "Config failure"
+        print("Config failure")
         sys.exit(1)
     if check_endian() == 1:
         data["endian"] = "big"

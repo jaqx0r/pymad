@@ -36,8 +36,6 @@ typedef struct {
 #define MAD_BUFSIZ(x) (PY_MADFILE(x)->bufsiz)
 #define MAD_TIMER(x) (PY_MADFILE(x)->timer)
 
-extern PyTypeObject py_madfile_t;
-
 static void py_madfile_dealloc(PyObject *self, PyObject *args);
 static PyObject *py_madfile_read(PyObject *self, PyObject *args);
 static PyObject *py_madfile_layer(PyObject *self, PyObject *args);
@@ -48,6 +46,5 @@ static PyObject *py_madfile_emphasis(PyObject *self, PyObject *args);
 static PyObject *py_madfile_total_time(PyObject *self, PyObject *args);
 static PyObject *py_madfile_current_time(PyObject *self, PyObject *args);
 static PyObject *py_madfile_seek_time(PyObject *self, PyObject *args);
-static PyObject *py_madfile_getattr(PyObject *self, char *name);
 
 #endif /* __PY_MADFILE_H__ */
