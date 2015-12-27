@@ -49,6 +49,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <errno.h>
+#include <assert.h>
 #include <fcntl.h>
 #include <string.h>
 #include <sys/stat.h>
@@ -509,12 +510,15 @@ static PyObject *py_madfile_read(PyObject *self, PyObject *args) {
    * so make it 4 times as big as the number of samples */
   size = MAD_SYNTH(self).pcm.length * 4;
 
-  #if PY_MAJOR_VERSION < 3
-    pybuf = PyBuffer_New(size);
-    PyObject_AsWriteBuffer(pybuf, (void *)&buffy, &size);
-  #else
-    pybuf = PyBytes_FromStringAndSize(buffy, size);
-  #endif
+#if PY_MAJOR_VERSION < 3
+  pybuf = PyBuffer_New(size);
+  PyObject_AsWriteBuffer(pybuf, (void *)&buffy, &size);
+#else
+  pybuf = PyBytes_FromStringAndSize(buffy, size);
+#endif
+
+  /* TODO(jaq): remove this check */
+  assert(PyObject_CheckBuffer(pybuf));
 
   /* die if we don't have the space */
   if (size < MAD_SYNTH(self).pcm.length * 4) {
