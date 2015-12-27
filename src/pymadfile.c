@@ -86,7 +86,7 @@
 
 /* local helpers */
 static unsigned long calc_total_time(PyObject *);
-static uint16_t madfixed_to_short(mad_fixed_t);
+static int16_t madfixed_to_int16(mad_fixed_t);
 
 static PyMethodDef madfile_methods[] = {
     {"read", py_madfile_read, METH_VARARGS, ""},
@@ -311,8 +311,8 @@ static unsigned long calc_total_time(PyObject *self) {
   return r;
 }
 
-/* convert the mad format to an uint16_t */
-static uint16_t madfixed_to_short(mad_fixed_t sample) {
+/* convert the mad format to an int16_t */
+static int16_t madfixed_to_int16(mad_fixed_t sample) {
   /* A fixed point number is formed of the following bit pattern:
    *
    * SWWWFFFFFFFFFFFFFFFFFFFFFFFFFFFF
@@ -326,7 +326,7 @@ static uint16_t madfixed_to_short(mad_fixed_t sample) {
    * number.  It is not guaranteed to be constant over the different
    * platforms supported by libmad.
    *
-   * The uint16_t value is formed by the least significant
+   * The int16_t value is formed by the least significant
    * whole part bit, followed by the 15 most significant fractional
    * part bits.
    *
@@ -534,10 +534,10 @@ static PyObject *py_madfile_read(PyObject *self, PyObject *args) {
    * big endian ints on two channels.  Integer samples are
    * temporarily stored in a buffer that is flushed when full. */
   for (i = 0; i < MAD_SYNTH(self).pcm.length; i++) {
-    uint16_t sample;
+    int16_t sample;
 
     /* left channel */
-    sample = madfixed_to_short(MAD_SYNTH(self).pcm.samples[0][i]);
+    sample = madfixed_to_int16(MAD_SYNTH(self).pcm.samples[0][i]);
 #ifdef BIGENDIAN
     *(buffy++) = sample >> 8;
     *(buffy++) = sample & 0xFF;
@@ -550,7 +550,7 @@ static PyObject *py_madfile_read(PyObject *self, PyObject *args) {
      * if the decoded stream is monophonic then the right channel
      * is the same as the left one */
     if (MAD_NCHANNELS(&MAD_FRAME(self).header) == 2)
-      sample = madfixed_to_short(MAD_SYNTH(self).pcm.samples[1][i]);
+      sample = madfixed_to_int16(MAD_SYNTH(self).pcm.samples[1][i]);
 #ifdef BIGENDIAN
     *(buffy++) = sample >> 8;
     *(buffy++) = sample & 0xFF;
