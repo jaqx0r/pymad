@@ -152,6 +152,9 @@ PyTypeObject py_madfile_t = {PyVarObject_HEAD_INIT(&PyType_Type, 0)
 PyObject *py_madfile_new(PyObject *self, PyObject *args) {
   py_madfile *mf = NULL;
   int close_file = 0;
+#if PY_MAJOR_VERSION >= 3
+  int fd;
+#endif
   char *fname;
   PyObject *fobject = NULL;
   char *initial;
