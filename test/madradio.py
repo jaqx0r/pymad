@@ -4,7 +4,7 @@ import glob
 import os.path
 import socket
 import sys
-import urlparse
+import urllib.parse
 
 import ao
 
@@ -15,7 +15,7 @@ import mad
 
 
 def madradio(url):
-    scheme, netloc, path, params, query, fragment = urlparse.urlparse(url)
+    scheme, netloc, path, params, query, fragment = urllib.parse.urlparse(url)
     try:
         host, port = netloc.split(':')
     except ValueError:
@@ -29,8 +29,8 @@ def madradio(url):
     #print repr(reply)
     file = sock.makefile()
     mf = mad.MadFile(file)
-    print "bitrate %lu bps" % mf.bitrate()
-    print "samplerate %d Hz" % mf.samplerate()
+    print(("bitrate %lu bps" % mf.bitrate()))
+    print(("samplerate %d Hz" % mf.samplerate()))
     dev = ao.AudioDevice(0, rate=mf.samplerate())
     while True:
         buffy = mf.read()

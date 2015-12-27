@@ -3,14 +3,14 @@
 import glob
 import os.path
 import sys
-import urllib
+import urllib.request, urllib.parse, urllib.error
 
 import ao
 
 for p in glob.glob("build/lib.*"):
     sys.path.insert(0, p)
 
-print sys.path
+print((sys.path))
 
 import mad
 
@@ -18,36 +18,36 @@ def play(u):
     mf = mad.MadFile(u)
     
     if mf.layer() == mad.LAYER_I:
-        print "MPEG Layer I"
+        print("MPEG Layer I")
     elif mf.layer() == mad.LAYER_II:
-        print "MPEG Layer II"
+        print("MPEG Layer II")
     elif mf.layer() == mad.LAYER_III:
-        print "MPEG Layer III"
+        print("MPEG Layer III")
     else:
-        print "unexpected layer value"
+        print("unexpected layer value")
         
     if mf.mode() == mad.MODE_SINGLE_CHANNEL:
-        print "single channel"
+        print("single channel")
     elif mf.mode() == mad.MODE_DUAL_CHANNEL:
-        print "dual channel"
+        print("dual channel")
     elif mf.mode() == mad.MODE_JOINT_STEREO:
-        print "joint (MS/intensity) stereo"
+        print("joint (MS/intensity) stereo")
     elif mf.mode() == mad.MODE_STEREO:
-        print "normal L/R stereo"
+        print("normal L/R stereo")
     else:
-        print "unexpected mode value"
+        print("unexpected mode value")
             
     if mf.emphasis() == mad.EMPHASIS_NONE:
-        print "no emphasis"
+        print("no emphasis")
     elif mf.emphasis() == mad.EMPHASIS_50_15_US:
-        print "50/15us emphasis"
+        print("50/15us emphasis")
     elif mf.emphasis() == mad.EMPHASIS_CCITT_J_17:
-        print "CCITT J.17 emphasis"
+        print("CCITT J.17 emphasis")
     else:
-        print "unexpected emphasis value"
+        print("unexpected emphasis value")
         
-    print "bitrate %lu bps" % mf.bitrate()
-    print "samplerate %d Hz" % mf.samplerate()
+    print(("bitrate %lu bps" % mf.bitrate()))
+    print(("samplerate %d Hz" % mf.samplerate()))
     sys.stdout.flush()
     #millis = mf.total_time()
     #secs = millis / 1000
@@ -62,10 +62,10 @@ def play(u):
         #print "current time: %d ms" % mf.current_time()
 
 if __name__ == "__main__":
-    print "pymad version %s" % mad.__version__
+    print(("pymad version %s" % mad.__version__))
     for file in sys.argv[1:]:
-        u = urllib.urlopen(file)
+        u = urllib.request.urlopen(file)
         if u:
         #if os.path.exists(file):
-            print "playing %s" % file
+            print(("playing %s" % file))
             play(u)
