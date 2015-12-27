@@ -1,11 +1,13 @@
 #!/usr/bin/env python
 
+from __future__ import print_function
+
 import string
 import os
 import sys
 
 def msg_checking(msg):
-    print("Checking", msg, "...")
+    print("Checking {}... ".format(msg), end='')
 
 def execute(cmd, display = 0):
     if display:
@@ -118,7 +120,7 @@ def check_endian(enable_endiantest = 1):
 
 def write_data(data):
     f = open('Setup', 'w')
-    for item in data.items():
+    for item in list(data.items()):
         f.write('%s = %s\n' % item)
     f.close()
     print("Wrote Setup file")
