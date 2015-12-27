@@ -15,10 +15,8 @@ print((sys.path))
 
 import mad
 
-
 data = io.StringIO(open("/home/jaq/foo.mp3","r").read())
 m = mad.MadFile(data)
 print("MadFile returned")
 for x in (1,2): pass
 print("got here")
-
