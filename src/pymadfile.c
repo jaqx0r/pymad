@@ -546,7 +546,7 @@ static PyObject *py_madfile_read(PyObject *self, PyObject *args) {
      * is the same as the left one */
     if (MAD_NCHANNELS(&MAD_FRAME(self).header) == 2)
       sample = madfixed_to_short(MAD_SYNTH(self).pcm.samples[1][i]);
-#ifdef Bigendian
+#ifdef BIGENDIAN
     *(buffy++) = sample >> 8;
     *(buffy++) = sample & 0xFF;
 #else
