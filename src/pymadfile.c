@@ -71,7 +71,7 @@
     #define MADFILE_GETATTR 0
     #define PyInt_FromLong PyLong_FromLong
     #define PyInt_AsLong PyLong_AsLong
-# else
+#else
     #define MADFILE_GETATTR (getattrfunc)py_madfile_getattr
     #define PyBytes_AsStringAndSize PyString_AsStringAndSize
 #endif

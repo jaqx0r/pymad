@@ -9,7 +9,11 @@ try:
 except ImportError:
   from urllib import urlopen
 
-for p in glob.glob("build/lib.*"):
+print(sys.version_info)
+PYTHON_VERSION = '{}.{}'.format(sys.version_info.major, sys.version_info.minor)
+
+for p in glob.glob("build/lib.*-" + PYTHON_VERSION):
+    print("Inserting build path {}".format(p))
     sys.path.insert(0, p)
 
 print((sys.path))
@@ -65,9 +69,11 @@ def play(u):
 
 if __name__ == "__main__":
     print(("pymad version %s" % mad.__version__))
-    for file in sys.argv[1:]:
-        u = urlopen(file)
+    for filename in sys.argv[1:]:
+        if os.path.exists(filename):
+          filename = "file://" + filename
+        u = urlopen(filename)
         if u:
         #if os.path.exists(file):
-            print(("playing %s" % file))
+            print(("playing %s" % filename))
             play(u)
