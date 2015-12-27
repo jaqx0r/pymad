@@ -51,6 +51,7 @@
 #include <errno.h>
 #include <assert.h>
 #include <fcntl.h>
+#include <stdint.h>
 #include <string.h>
 #include <sys/stat.h>
 #include <sys/mman.h>
@@ -85,7 +86,7 @@
 
 /* local helpers */
 static unsigned long calc_total_time(PyObject *);
-static signed short int madfixed_to_short(mad_fixed_t);
+static uint16_t madfixed_to_short(mad_fixed_t);
 
 static PyMethodDef madfile_methods[] = {
     {"read", py_madfile_read, METH_VARARGS, ""},
@@ -310,8 +311,8 @@ static unsigned long calc_total_time(PyObject *self) {
   return r;
 }
 
-/* convert the mad format to an unsigned short */
-static signed short int madfixed_to_short(mad_fixed_t sample) {
+/* convert the mad format to an uint16_t */
+static uint16_t madfixed_to_short(mad_fixed_t sample) {
   /* A fixed point number is formed of the following bit pattern:
    *
    * SWWWFFFFFFFFFFFFFFFFFFFFFFFFFFFF
@@ -325,7 +326,7 @@ static signed short int madfixed_to_short(mad_fixed_t sample) {
    * number.  It is not guaranteed to be constant over the different
    * platforms supported by libmad.
    *
-   * The unsigned short value is formed by the least significant
+   * The uint16_t value is formed by the least significant
    * whole part bit, followed by the 15 most significant fractional
    * part bits.
    *
@@ -533,7 +534,7 @@ static PyObject *py_madfile_read(PyObject *self, PyObject *args) {
    * big endian ints on two channels.  Integer samples are
    * temporarily stored in a buffer that is flushed when full. */
   for (i = 0; i < MAD_SYNTH(self).pcm.length; i++) {
-    signed short sample;
+    uint16_t sample;
 
     /* left channel */
     sample = madfixed_to_short(MAD_SYNTH(self).pcm.samples[0][i]);
