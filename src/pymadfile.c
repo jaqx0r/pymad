@@ -144,14 +144,14 @@ PyTypeObject py_madfile_t = {PyVarObject_HEAD_INIT(&PyType_Type, 0)
                              0, /* tp_subclasses */
                              0, /* tp_weaklist */
                              0, /* tp_del */
-                             NULL};
+                             0, /* tp_version_tag */
+                             };
 
 /* functions */
 
 PyObject *py_madfile_new(PyObject *self, PyObject *args) {
   py_madfile *mf = NULL;
   int close_file = 0;
-  int fd;
   char *fname;
   PyObject *fobject = NULL;
   char *initial;
