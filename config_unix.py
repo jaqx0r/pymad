@@ -2,31 +2,30 @@
 
 from __future__ import print_function
 
-import string
 import os
 import sys
 
 def msg_checking(msg):
     print("Checking {}... ".format(msg), end='')
 
-def execute(cmd, display = 0):
+def execute(cmd, display=0):
     if display:
         print(cmd)
     return os.system(cmd)
 
-def run_test(input, flags = ''):
+def run_test(inp, flags=''):
     try:
-        f = open('_temp.c', 'w')
-        f.write(input)
-        f.close()
+        tmp = open('_temp.c', 'w')
+        tmp.write(inp)
+        tmp.close()
         compile_cmd = '%s -o _temp _temp.c %s' % (os.environ.get('CC', 'cc'),
                                                   flags)
         if not execute(compile_cmd):
             execute('./_temp')
     finally:
         execute('rm -f _temp.c _temp')
-    
-mad_test_program = '''
+
+MAD_TEST_PROGRAM = '''
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -39,12 +38,11 @@ int main ()
 }
 '''
 
-def find_mad(mad_prefix = '/usr/local', enable_madtest = 1):
+def find_mad(mad_prefix='/usr/local', enable_madtest=1):
     """A rough translation of mad.m4"""
 
-    mad_cflags = []
     mad_libs = []
-    
+
     mad_include_dir = mad_prefix + '/include'
     mad_lib_dir = mad_prefix + '/lib'
     mad_libs = 'mad'
@@ -55,11 +53,11 @@ def find_mad(mad_prefix = '/usr/local', enable_madtest = 1):
         execute('rm -f conf.madtest', 0)
 
         try:
-            run_test(mad_test_program, flags="-I" + mad_include_dir)
+            run_test(MAD_TEST_PROGRAM, flags="-I" + mad_include_dir)
             if not os.path.isfile('conf.madtest'):
                 raise RuntimeError("Did not produce output")
             execute('rm conf.madtest', 0)
-            
+
         except:
             print("test program failed")
             return None
@@ -70,7 +68,7 @@ def find_mad(mad_prefix = '/usr/local', enable_madtest = 1):
             'mad_lib_dir' : mad_lib_dir,
             'mad_include_dir' : mad_include_dir}
 
-endian_test_program = '''
+ENDIAN_TEST_PROGRAM = '''
 #include <stdio.h>
 
 int litend() {
@@ -92,7 +90,7 @@ int main() {
 }
 '''
 
-def check_endian(enable_endiantest = 1):
+def check_endian(enable_endiantest=1):
     """check the system for endianness"""
 
     bigendian = 1
@@ -101,7 +99,7 @@ def check_endian(enable_endiantest = 1):
 
     if enable_endiantest:
         try:
-            run_test(endian_test_program)
+            run_test(ENDIAN_TEST_PROGRAM)
             if os.path.isfile("little.endiantest"):
                 bigendian = 0
             elif os.path.isfile("big.endiantest"):
@@ -116,15 +114,15 @@ def check_endian(enable_endiantest = 1):
     print("success")
 
     return bigendian
-            
+
 
 def write_data(data):
-    f = open('Setup', 'w')
+    setup_file = open('Setup', 'w')
     for item in list(data.items()):
-        f.write('%s = %s\n' % item)
-    f.close()
+        setup_file.write('%s = %s\n' % item)
+    setup_file.close()
     print("Wrote Setup file")
-            
+
 def print_help():
     print('''%s
     --prefix      Give the prefix in which MAD was installed.''' % sys.argv[0])
@@ -144,12 +142,12 @@ def parse_args():
             data['prefix'] = argv[pos]
 
     return data
-    
+
 def main():
     args = parse_args()
     prefix = args.get('prefix', '/usr/local')
 
-    data = find_mad(mad_prefix = prefix)
+    data = find_mad(mad_prefix=prefix)
     if not data:
         print("Config failure")
         sys.exit(1)
@@ -161,7 +159,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
-
-
-
