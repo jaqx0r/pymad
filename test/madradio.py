@@ -4,7 +4,11 @@ import glob
 import os.path
 import socket
 import sys
-import urllib.parse
+
+try:
+  from urllib.parse import urlparse
+except ImportError:
+  from urlparse import urlparse
 
 import ao
 
@@ -15,7 +19,7 @@ import mad
 
 
 def madradio(url):
-    scheme, netloc, path, params, query, fragment = urllib.parse.urlparse(url)
+    scheme, netloc, path, params, query, fragment = urlparse(url)
     try:
         host, port = netloc.split(':')
     except ValueError:
