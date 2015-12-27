@@ -328,9 +328,9 @@ static signed short int madfixed_to_short(mad_fixed_t sample) {
    * whole part bit, followed by the 15 most significant fractional
    * part bits.
    *
-   * This algorithm was taken from input/mad/mad_engine.c in
-   * alsaplayer, because the one in madlld sucked arse.
-   * http://www.geocrawler.com/archives/3/15440/2001/9/0/6629549/
+   * This algorithm was taken from input/mad/mad_engine.c in alsaplayer,
+   * which scales and rounds samples to 16 bits, unlike the version in
+   * madlld.
    */
 
   /* round */
