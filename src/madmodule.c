@@ -23,7 +23,8 @@
 #endif
 
 static PyMethodDef mad_methods[] = {
-    {"MadFile", py_madfile_new, METH_VARARGS, ""}, {NULL, 0, 0, NULL}};
+    {"MadFile", py_madfile_new, METH_VARARGS, ""},
+    {NULL, 0, 0, NULL}};
 
 /* this handy tool for passing C constants to Python-land from
  * http://starship.python.net/crew/arcege/extwriting/pyext.html
