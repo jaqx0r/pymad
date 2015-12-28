@@ -1,5 +1,7 @@
 #!/usr/bin/python
 
+from __future__ import print_function
+
 import glob
 import os.path
 import sys
@@ -19,6 +21,8 @@ for p in glob.glob("build/lib.*-" + PYTHON_VERSION):
 print((sys.path))
 
 import mad
+
+print(mad.__file__)
 
 def play(u):
     mf = mad.MadFile(u)
