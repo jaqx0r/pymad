@@ -11,7 +11,7 @@ import urllib.error
 import ao
 
 for p in glob.glob("build/lib.*"):
-  sys.path.insert(0, p)
+    sys.path.insert(0, p)
 
 print((sys.path))
 
@@ -21,5 +21,5 @@ data = io.StringIO(open("/home/jaq/foo.mp3", "r").read())
 m = mad.MadFile(data)
 print("MadFile returned")
 for x in (1, 2):
-  pass
+    pass
 print("got here")
