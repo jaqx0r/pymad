@@ -41,9 +41,6 @@ DEFINES = [('VERSION_MAJOR', VERSION_MAJOR),
            ('VERSION_MINOR', VERSION_MINOR),
            ('VERSION', '"%s"' % PYMAD_VERSION)]
 
-if SETUP_DATA['endian'] == "big":
-    DEFINES.append(('BIGENDIAN', 1))
-
 MADMODULE = Extension(
     name='mad',
     sources=['src/madmodule.c', 'src/pymadfile.c', 'src/xing.c'],
