@@ -13,26 +13,25 @@
 #include "madmodule.h"
 
 #if PY_MAJOR_VERSION >= 3
-  #define MOD_DEF(ob, name, doc, methods) \
-    static struct PyModuleDef moduledef = { \
-      PyModuleDef_HEAD_INIT, name, doc, -1, methods, }; \
-    ob = PyModule_Create(&moduledef);
+#define MOD_DEF(ob, name, doc, methods)                                        \
+  static struct PyModuleDef moduledef = {                                      \
+      PyModuleDef_HEAD_INIT, name, doc, -1, methods,                           \
+  };                                                                           \
+  ob = PyModule_Create(&moduledef);
 #else
-  #define MOD_DEF(ob, name, doc, methods) \
-    ob = Py_InitModule3(name, methods, doc);
+#define MOD_DEF(ob, name, doc, methods) ob = Py_InitModule3(name, methods, doc);
 #endif
 
 static PyMethodDef mad_methods[] = {
-    {"MadFile", py_madfile_new, METH_VARARGS, ""},
-    {NULL, 0, 0, NULL}};
+    {"MadFile", py_madfile_new, METH_VARARGS, ""}, {NULL, 0, 0, NULL}};
 
 /* this handy tool for passing C constants to Python-land from
  * http://starship.python.net/crew/arcege/extwriting/pyext.html
  */
 #if PY_MAJOR_VERSION >= 3
-  #define PY_CONST(x) PyDict_SetItemString(dict, #x, PyLong_FromLong(MAD_##x))
+#define PY_CONST(x) PyDict_SetItemString(dict, #x, PyLong_FromLong(MAD_##x))
 #else
-  #define PY_CONST(x) PyDict_SetItemString(dict, #x, PyInt_FromLong(MAD_##x))
+#define PY_CONST(x) PyDict_SetItemString(dict, #x, PyInt_FromLong(MAD_##x))
 #endif
 
 extern PyTypeObject py_madfile_t;
@@ -71,13 +70,7 @@ static PyObject *moduleinit(void) {
 }
 
 #if PY_MAJOR_VERSION < 3
-    PyMODINIT_FUNC initmad(void)
-    {
-        moduleinit();
-    }
+PyMODINIT_FUNC initmad(void) { moduleinit(); }
 #else
-    PyMODINIT_FUNC PyInit_mad(void)
-    {
-        return moduleinit();
-    }
+PyMODINIT_FUNC PyInit_mad(void) { return moduleinit(); }
 #endif

@@ -65,17 +65,16 @@
 #endif
 
 #ifndef PyVarObject_HEAD_INIT
-  #define PyVarObject_HEAD_INIT(type, size) \
-    PyObject_HEAD_INIT(type) size,
+#define PyVarObject_HEAD_INIT(type, size) PyObject_HEAD_INIT(type) size,
 #endif
 
 #if PY_MAJOR_VERSION >= 3
-    #define MADFILE_GETATTR 0
-    #define PyInt_FromLong PyLong_FromLong
-    #define PyInt_AsLong PyLong_AsLong
+#define MADFILE_GETATTR 0
+#define PyInt_FromLong PyLong_FromLong
+#define PyInt_AsLong PyLong_AsLong
 #else
-    #define MADFILE_GETATTR (getattrfunc)py_madfile_getattr
-    #define PyBytes_AsStringAndSize PyString_AsStringAndSize
+#define MADFILE_GETATTR (getattrfunc) py_madfile_getattr
+#define PyBytes_AsStringAndSize PyString_AsStringAndSize
 #endif
 
 #define ERROR_MSG_SIZE 512
@@ -100,54 +99,54 @@ static PyMethodDef madfile_methods[] = {
     {"seek_time", py_madfile_seek_time, METH_VARARGS, ""},
     {NULL, 0, 0, NULL}};
 
-PyTypeObject py_madfile_t = {PyVarObject_HEAD_INIT(&PyType_Type, 0)
-                             "MadFile", /* tp_name */
-                             sizeof(py_madfile), /* tp_basicsize */
-                             0, /* tp_itemsize */
-                             (destructor)py_madfile_dealloc, /* tp_dealloc */
-                             0, /* (tp_print) */
-                             0, /* (tp_getattr) */
-                             0, /* (tp_setattr) */
-                             0, /* (tp_reserved) [was tp_compare] */
-                             0, /* tp_repr */
-                             0, /* tp_as_number */
-                             0, /* tp_as_sequence */
-                             0, /* tp_as_mapping */
-                             0, /* tp_hash */
-                             0, /* tp_call */
-                             0, /* tp_str */
-                             0, /* tp_getattro */
-                             0, /* tp_setattro */
-                             0, /* tp_as_buffer */
-                             0, /* tp_flags */
-                             0, /* tp_doc */
-                             0, /* tp_traverse */
-                             0, /* tp_clear */
-                             0, /* tp_richcompare */
-                             0, /* tp_weaklistoffset */
-                             0, /* tp_iter */
-                             0, /* tp_iternext */
-                             madfile_methods, /* tp_methods */
-                             0, /* tp_members */
-                             0, /* tp_getset */
-                             0, /* tp_base */
-                             0, /* tp_dict */
-                             0, /* tp_descr_get */
-                             0, /* tp_descr_set */
-                             0, /* tp_dictoffset */
-                             0, /* tp_init */
-                             0, /* tp_alloc */
-                             0, /* tp_new */
-                             0, /* tp_free */
-                             0, /* tp_is_gc */
-                             0, /* tp_bases */
-                             0, /* tp_mro */
-                             0, /* tp_cache */
-                             0, /* tp_subclasses */
-                             0, /* tp_weaklist */
-                             0, /* tp_del */
-                             0, /* tp_version_tag */
-                             };
+PyTypeObject py_madfile_t = {
+    PyVarObject_HEAD_INIT(&PyType_Type, 0) "MadFile", /* tp_name */
+    sizeof(py_madfile),                               /* tp_basicsize */
+    0,                                                /* tp_itemsize */
+    (destructor)py_madfile_dealloc,                   /* tp_dealloc */
+    0,                                                /* (tp_print) */
+    0,                                                /* (tp_getattr) */
+    0,                                                /* (tp_setattr) */
+    0,               /* (tp_reserved) [was tp_compare] */
+    0,               /* tp_repr */
+    0,               /* tp_as_number */
+    0,               /* tp_as_sequence */
+    0,               /* tp_as_mapping */
+    0,               /* tp_hash */
+    0,               /* tp_call */
+    0,               /* tp_str */
+    0,               /* tp_getattro */
+    0,               /* tp_setattro */
+    0,               /* tp_as_buffer */
+    0,               /* tp_flags */
+    0,               /* tp_doc */
+    0,               /* tp_traverse */
+    0,               /* tp_clear */
+    0,               /* tp_richcompare */
+    0,               /* tp_weaklistoffset */
+    0,               /* tp_iter */
+    0,               /* tp_iternext */
+    madfile_methods, /* tp_methods */
+    0,               /* tp_members */
+    0,               /* tp_getset */
+    0,               /* tp_base */
+    0,               /* tp_dict */
+    0,               /* tp_descr_get */
+    0,               /* tp_descr_set */
+    0,               /* tp_dictoffset */
+    0,               /* tp_init */
+    0,               /* tp_alloc */
+    0,               /* tp_new */
+    0,               /* tp_free */
+    0,               /* tp_is_gc */
+    0,               /* tp_bases */
+    0,               /* tp_mro */
+    0,               /* tp_cache */
+    0,               /* tp_subclasses */
+    0,               /* tp_weaklist */
+    0,               /* tp_del */
+    0,               /* tp_version_tag */
+};
 
 /* functions */
 
@@ -165,14 +164,14 @@ PyObject *py_madfile_new(PyObject *self, PyObject *args) {
   int n;
 
   if (PyArg_ParseTuple(args, "s|l:MadFile", &fname, &bufsiz)) {
-    #if PY_MAJOR_VERSION < 3
-      fobject = PyFile_FromString(fname, "r");
-    #else
-      if ((fd = open(fname, O_RDONLY)) < 0) {
-        return NULL;
-      }
-      fobject = PyFile_FromFd(fd, fname, "r", -1, NULL, NULL, NULL, 1);
-    #endif
+#if PY_MAJOR_VERSION < 3
+    fobject = PyFile_FromString(fname, "r");
+#else
+    if ((fd = open(fname, O_RDONLY)) < 0) {
+      return NULL;
+    }
+    fobject = PyFile_FromFd(fd, fname, "r", -1, NULL, NULL, NULL, 1);
+#endif
     close_file = 1;
     if (fobject == NULL) {
       return NULL;
@@ -349,7 +348,7 @@ static int16_t madfixed_to_int16(mad_fixed_t sample) {
 }
 
 static PyObject *py_madfile_read(PyObject *self, PyObject *args) {
-  PyObject *pybuf; /* return object containing output buffer*/
+  PyObject *pybuf;    /* return object containing output buffer*/
   char *buffy = NULL; /* output buffer */
   unsigned int i;
   Py_ssize_t size;
