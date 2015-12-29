@@ -528,35 +528,29 @@ static PyObject *py_madfile_read(PyObject *self, PyObject *args) {
 
   Py_BEGIN_ALLOW_THREADS;
 
-  /* Synthesised samples must be converted from mad's fixed point
-   * format to the consumer format.  Here we use signed 16 bit
-   * big endian ints on two channels.  Integer samples are
-   * temporarily stored in a buffer that is flushed when full. */
+  /* Synthesised samples must be converted from mad's fixed point format to the
+   * consumer format -- use signed 16 bit big-endian ints on two channels.
+   * Integer samples are temporarily stored in a buffer that is flushed when
+   * full. */
   for (i = 0; i < MAD_SYNTH(self).pcm.length; i++) {
-    int16_t sample;
+    union {
+      int16_t sample;
+      char bytes[2];
+    } u;
 
     /* left channel */
-    sample = madfixed_to_int16(MAD_SYNTH(self).pcm.samples[0][i]);
-#ifdef BIGENDIAN
-    *(buffy++) = sample >> 8;
-    *(buffy++) = sample & 0xFF;
-#else
-    *(buffy++) = sample & 0xFF;
-    *(buffy++) = sample >> 8;
-#endif
+    u.sample = madfixed_to_int16(MAD_SYNTH(self).pcm.samples[0][i]);
+    *(buffy++) = u.bytes[0];
+    *(buffy++) = u.bytes[1];
 
     /* right channel.
      * if the decoded stream is monophonic then the right channel
      * is the same as the left one */
     if (MAD_NCHANNELS(&MAD_FRAME(self).header) == 2)
-      sample = madfixed_to_int16(MAD_SYNTH(self).pcm.samples[1][i]);
-#ifdef BIGENDIAN
-    *(buffy++) = sample >> 8;
-    *(buffy++) = sample & 0xFF;
-#else
-    *(buffy++) = sample & 0xFF;
-    *(buffy++) = sample >> 8;
-#endif
+      u.sample = madfixed_to_int16(MAD_SYNTH(self).pcm.samples[1][i]);
+
+    *(buffy++) = u.bytes[0];
+    *(buffy++) = u.bytes[1];
   }
 
   Py_END_ALLOW_THREADS;
