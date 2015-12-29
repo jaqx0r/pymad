@@ -348,8 +348,8 @@ static int16_t madfixed_to_int16(mad_fixed_t sample) {
 }
 
 static PyObject *py_madfile_read(PyObject *self, PyObject *args) {
-  PyObject *pybuf;    /* return object containing output buffer*/
-  char *buffy = NULL; /* output buffer */
+  PyObject *pybuf;        /* return object containing output buffer*/
+  int16_t *output = NULL; /* output buffer */
   unsigned int i;
   Py_ssize_t size;
   int nextframe = 0;
@@ -506,15 +506,15 @@ static PyObject *py_madfile_read(PyObject *self, PyObject *args) {
   Py_END_ALLOW_THREADS;
 
   /* Create the buffer to store the PCM samples in, so python can
-   * use it.  We do 4 pointer increments per sample in the buffer,
-   * so make it 4 times as big as the number of samples */
-  size = MAD_SYNTH(self).pcm.length * 4;
+   * use it.  We do 2 pointer increments per sample in the buffer,
+   * so make it 2 times as big as the number of samples */
+  size = MAD_SYNTH(self).pcm.length * 2 * sizeof(int16_t);
 
 #if PY_MAJOR_VERSION < 3
   pybuf = PyBuffer_New(size);
-  PyObject_AsWriteBuffer(pybuf, (void *)&buffy, &size);
+  PyObject_AsWriteBuffer(pybuf, (void *)&output, &size);
 #else
-  pybuf = PyBytes_FromStringAndSize(buffy, size);
+  pybuf = PyBytes_FromStringAndSize((void*)output, size);
 #endif
 
   /* TODO(jaq): remove this check */
@@ -533,24 +533,18 @@ static PyObject *py_madfile_read(PyObject *self, PyObject *args) {
    * Integer samples are temporarily stored in a buffer that is flushed when
    * full. */
   for (i = 0; i < MAD_SYNTH(self).pcm.length; i++) {
-    union {
-      int16_t sample;
-      char bytes[2];
-    } u;
+    int16_t sample;
 
     /* left channel */
-    u.sample = madfixed_to_int16(MAD_SYNTH(self).pcm.samples[0][i]);
-    *(buffy++) = u.bytes[0];
-    *(buffy++) = u.bytes[1];
+    *(output++) = sample = madfixed_to_int16(MAD_SYNTH(self).pcm.samples[0][i]);
 
     /* right channel.
      * if the decoded stream is monophonic then the right channel
      * is the same as the left one */
     if (MAD_NCHANNELS(&MAD_FRAME(self).header) == 2)
-      u.sample = madfixed_to_int16(MAD_SYNTH(self).pcm.samples[1][i]);
+      sample = madfixed_to_int16(MAD_SYNTH(self).pcm.samples[1][i]);
 
-    *(buffy++) = u.bytes[0];
-    *(buffy++) = u.bytes[1];
+    *(output++) = sample;
   }
 
   Py_END_ALLOW_THREADS;
