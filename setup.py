@@ -11,29 +11,30 @@ from distutils.extension import Extension
 
 VERSION_MAJOR = 0
 VERSION_MINOR = 8
-PYMAD_VERSION = str(VERSION_MAJOR) + "." + str(VERSION_MINOR)
+PYMAD_VERSION = str(VERSION_MAJOR) + '.' + str(VERSION_MINOR)
+
 
 def get_setup():
-    """Read the configuration data from the Setup file."""
-    data = {}
-    expr = re.compile(r'(\S+)\s*=\s*(.+)')
+  """Read the configuration data from the Setup file."""
+  data = {}
+  expr = re.compile(r'(\S+)\s*=\s*(.+)')
 
-    if not os.path.isfile('Setup'):
-        print("No 'Setup' file. Perhaps you need to run the configure script.")
-        sys.exit(1)
+  if not os.path.isfile('Setup'):
+    print("No 'Setup' file. Perhaps you need to run the configure script.")
+    sys.exit(1)
 
-    setup_file = open('Setup', 'r')
+  setup_file = open('Setup', 'r')
 
-    for line in setup_file.readlines():
-        match = expr.search(line)
-        if not match:
-            print("Error in setup file:", line)
-            sys.exit(1)
-        key = match.group(1)
-        val = match.group(2)
-        data[key] = val
+  for line in setup_file.readlines():
+    match = expr.search(line)
+    if not match:
+      print('Error in setup file:', line)
+      sys.exit(1)
+    key = match.group(1)
+    val = match.group(2)
+    data[key] = val
 
-    return data
+  return data
 
 SETUP_DATA = get_setup()
 
@@ -50,11 +51,11 @@ MADMODULE = Extension(
     libraries=SETUP_DATA['mad_libs'].split())
 
 setup(  # Distribution metadata
-    name="pymad",
+    name='pymad',
     version=PYMAD_VERSION,
-    description="A wrapper for the MAD libraries.",
-    author="Jamie Wilkinson",
-    author_email="jaq@spacepants.org",
-    url="http://spacepants.org/src/pymad/",
-    license="GPL",
+    description='A wrapper for the MAD libraries.',
+    author='Jamie Wilkinson',
+    author_email='jaq@spacepants.org',
+    url='http://spacepants.org/src/pymad/',
+    license='GPL',
     ext_modules=[MADMODULE])
