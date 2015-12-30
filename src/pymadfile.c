@@ -510,15 +510,13 @@ static PyObject *py_madfile_read(PyObject *self, PyObject *args) {
    * so make it 2 times as big as the number of samples */
   size = PYMAD_SYNTH(self).pcm.length * 2 * sizeof(int16_t);
 
-#if PY_MAJOR_VERSION < 3
-  pybuf = PyBuffer_New(size);
-  PyObject_AsWriteBuffer(pybuf, (void *)&output, &size);
-#else
-  (void *)output = PyByteArray_FromStringAndSize((void *)output, size);
-#endif
-
-  /* TODO(jaq): remove this check */
-  assert(PyObject_CheckBuffer(pybuf));
+  output = malloc(size);
+  if (!output) {
+    PyErr_SetString(PyExc_MemoryError,
+                    "could not allocate memory for output buffer");
+    return NULL;
+  }
+  pybuf = PyByteArray_FromStringAndSize((const char *)output, size);
 
   /* die if we don't have the space */
   if (size < PYMAD_SYNTH(self).pcm.length * 4) {
