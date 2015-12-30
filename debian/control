@@ -16,7 +16,7 @@ Depends: ${python:Depends}, ${shlibs:Depends}, ${misc:Depends}
 Provides: ${python:Provides}
 Conflicts: python2.3-pymad (<< 0.5.4-3.1), python2.4-pymad (<< 0.5.4-3.1)
 Replaces: python2.3-pymad (<< 0.5.4-3.1), python2.4-pymad (<< 0.5.4-3.1)
-Description: Python wrapper to the MPEG Audio Decoder library (Python 3)
+Description: Python wrapper to the MPEG Audio Decoder library (Python 2)
  This module makes the MAD MP3 decoder library available to Python
  programs.  It provides a high-level API to the MAD functions, that make
  reading audio data from an MPEG stream simple.
@@ -33,3 +33,29 @@ Description: Python wrapper to the MPEG Audio Decoder library (Python 3)
  reading audio data from an MPEG stream simple.
  .
  This package installs the library for Python 3.
+
+Package: python-pymad-dbg
+Architecture: any
+Section: debug
+Priority: extra
+Depends: ${python:Depends}, ${shlibs:Depends}, ${misc:Depends}, python-pymad
+Provides: ${python:Provides}
+Description: Python wrapper to the MPEG Audio Decoder library (Python 2 debug)
+ This module makes the MAD MP3 decoder library available to Python
+ programs.  It provides a high-level API to the MAD functions, that make
+ reading audio data from an MPEG stream simple.
+ .
+ This package installs the debugging symbols for the library for Python 2.
+
+Package: python3-pymad-dbg
+Architecture: any
+Section: debug
+Priority: extra
+Depends: ${python3:Depends}, ${shlibs:Depends}, ${misc:Depends}, python3-pymad
+Provides: ${python3:Provides}
+Description: Python wrapper to the MPEG Audio Decoder library (Python 3 debug)
+ This module makes the MAD MP3 decoder library available to Python 3
+ programs.  It provides a high-level API to the MAD functions, that make
+ reading audio data from an MPEG stream simple.
+ .
+ This package installs the debugging symbols for the library for Python 3.
