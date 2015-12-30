@@ -201,10 +201,10 @@ PyObject *py_madfile_new(PyObject *self, PyObject *args) {
   mf->close_file = close_file;
 
   /* initialise the mad structs */
-  mad_stream_init(&MAD_STREAM(mf));
-  mad_frame_init(&MAD_FRAME(mf));
-  mad_synth_init(&MAD_SYNTH(mf));
-  mad_timer_reset(&MAD_TIMER(mf));
+  mad_stream_init(&PYMAD_STREAM(mf));
+  mad_frame_init(&PYMAD_FRAME(mf));
+  mad_synth_init(&PYMAD_SYNTH(mf));
+  mad_timer_reset(&PYMAD_TIMER(mf));
 
   mf->framecount = 0;
 
@@ -224,13 +224,13 @@ static void py_madfile_dealloc(PyObject *self, PyObject *args) {
   PyObject *o;
 
   if (PY_MADFILE(self)->fobject) {
-    mad_synth_finish(&MAD_SYNTH(self));
-    mad_frame_finish(&MAD_FRAME(self));
-    mad_stream_finish(&MAD_STREAM(self));
+    mad_synth_finish(&PYMAD_SYNTH(self));
+    mad_frame_finish(&PYMAD_FRAME(self));
+    mad_stream_finish(&PYMAD_STREAM(self));
 
-    free(MAD_BUFFY(self));
-    MAD_BUFFY(self) = NULL;
-    MAD_BUFSIZ(self) = 0;
+    free(PYMAD_BUFFER(self));
+    PYMAD_BUFFER(self) = NULL;
+    PYMAD_BUFSIZE(self) = 0;
 
     if (PY_MADFILE(self)->close_file) {
       o = PyObject_CallMethod(PY_MADFILE(self)->fobject, "close", NULL);
@@ -256,10 +256,10 @@ static unsigned long calc_total_time(PyObject *self) {
   int fnum;
 
   xing_init(&xing);
-  xing_parse(&xing, MAD_STREAM(self).anc_ptr, MAD_STREAM(self).anc_bitlen);
+  xing_parse(&xing, PYMAD_STREAM(self).anc_ptr, PYMAD_STREAM(self).anc_bitlen);
 
   if (xing.flags & XING_FRAMES) {
-    timer = MAD_FRAME(self).header.duration;
+    timer = PYMAD_FRAME(self).header.duration;
     mad_timer_multiply(&timer, xing.frames);
     r = mad_timer_count(timer, MAD_UNITS_MILLISECONDS);
   } else {
@@ -355,9 +355,6 @@ static PyObject *py_madfile_read(PyObject *self, PyObject *args) {
   int nextframe = 0;
   int result;
   char errmsg[ERROR_MSG_SIZE];
-#if PY_MAJOR_VERSION < 3
-  Py_buffer view;
-#endif
 
   /* if we are at EOF, then return None */
   // FIXME: move to if null read
@@ -375,8 +372,8 @@ static PyObject *py_madfile_read(PyObject *self, PyObject *args) {
 
     /* The input bucket must be filled if it becomes empty or if
      * it's the first execution on this file */
-    if ((MAD_STREAM(self).buffer == NULL) ||
-        (MAD_STREAM(self).error == MAD_ERROR_BUFLEN)) {
+    if ((PYMAD_STREAM(self).buffer == NULL) ||
+        (PYMAD_STREAM(self).error == MAD_ERROR_BUFLEN)) {
       Py_ssize_t readsize, remaining;
       unsigned char *readstart;
       PyObject *o_read;
@@ -399,13 +396,14 @@ static PyObject *py_madfile_read(PyObject *self, PyObject *args) {
        *     frame at the highest observable bitrate (currently
        *     448kbps).
        */
-      if (MAD_STREAM(self).next_frame != NULL) {
-        remaining = MAD_STREAM(self).bufend - MAD_STREAM(self).next_frame;
-        memmove(MAD_BUFFY(self), MAD_STREAM(self).next_frame, remaining);
-        readstart = MAD_BUFFY(self) + remaining;
-        readsize = MAD_BUFSIZ(self) - remaining;
+      if (PYMAD_STREAM(self).next_frame != NULL) {
+        remaining = PYMAD_STREAM(self).bufend - PYMAD_STREAM(self).next_frame;
+        memmove(PYMAD_BUFFER(self), PYMAD_STREAM(self).next_frame, remaining);
+        readstart = PYMAD_BUFFER(self) + remaining;
+        readsize = PYMAD_BUFSIZE(self) - remaining;
       } else
-        readstart = MAD_BUFFY(self), readsize = MAD_BUFSIZ(self), remaining = 0;
+        readstart = PYMAD_BUFFER(self), readsize = PYMAD_BUFSIZE(self),
+        remaining = 0;
 
       /* Fill in the buffer.  If an error occurs, make like a tree */
       o_read =
@@ -427,9 +425,9 @@ static PyObject *py_madfile_read(PyObject *self, PyObject *args) {
 
       /* Pipe the new buffer content to libmad's stream decode
        * facility */
-      mad_stream_buffer(&MAD_STREAM(self), MAD_BUFFY(self),
+      mad_stream_buffer(&PYMAD_STREAM(self), PYMAD_BUFFER(self),
                         readsize + remaining);
-      MAD_STREAM(self).error = 0;
+      PYMAD_STREAM(self).error = 0;
     }
 
     /* Decode the next mpeg frame.  The streams are read from the
@@ -461,26 +459,26 @@ static PyObject *py_madfile_read(PyObject *self, PyObject *args) {
      * skip the faulty part and resync to the next frame.
      */
     Py_BEGIN_ALLOW_THREADS;
-    result = mad_frame_decode(&MAD_FRAME(self), &MAD_STREAM(self));
+    result = mad_frame_decode(&PYMAD_FRAME(self), &PYMAD_STREAM(self));
     Py_END_ALLOW_THREADS;
     if (result) {
-      if (MAD_RECOVERABLE(MAD_STREAM(self).error)) {
+      if (MAD_RECOVERABLE(PYMAD_STREAM(self).error)) {
         /* FIXME: prefer to return an error string to the caller
          * rather than print to stderr
         fprintf(stderr, "mad: recoverable frame level error: %s\n",
-                mad_stream_errorstr(&MAD_STREAM(self)));
+                mad_stream_errorstr(&PYMAD_STREAM(self)));
         fflush(stderr);
         */
         /* go onto the next frame */
         nextframe = 1;
       } else {
-        if (MAD_STREAM(self).error == MAD_ERROR_BUFLEN) {
+        if (PYMAD_STREAM(self).error == MAD_ERROR_BUFLEN) {
           /* not enough data to decode */
           nextframe = 1;
         } else {
           snprintf(errmsg, ERROR_MSG_SIZE,
                    "unrecoverable frame level error: %s",
-                   mad_stream_errorstr(&MAD_STREAM(self)));
+                   mad_stream_errorstr(&PYMAD_STREAM(self)));
           PyErr_SetString(PyExc_RuntimeError, errmsg);
           return NULL;
         }
@@ -500,32 +498,31 @@ static PyObject *py_madfile_read(PyObject *self, PyObject *args) {
    * of mad's timer module receive their mad_timer_t arguments by
    * value! */
   PY_MADFILE(self)->framecount++;
-  mad_timer_add(&MAD_TIMER(self), MAD_FRAME(self).header.duration);
+  mad_timer_add(&PYMAD_TIMER(self), PYMAD_FRAME(self).header.duration);
 
   /* Once decoded, the frame can be synthesised to PCM samples.
    * No errors are reported by mad_synth_frame() */
-  mad_synth_frame(&MAD_SYNTH(self), &MAD_FRAME(self));
+  mad_synth_frame(&PYMAD_SYNTH(self), &PYMAD_FRAME(self));
 
   Py_END_ALLOW_THREADS;
 
   /* Create the buffer to store the PCM samples in, so python can
    * use it.  We do 2 pointer increments per sample in the buffer,
    * so make it 2 times as big as the number of samples */
-  size = MAD_SYNTH(self).pcm.length * 2 * sizeof(int16_t);
+  size = PYMAD_SYNTH(self).pcm.length * 2 * sizeof(int16_t);
 
 #if PY_MAJOR_VERSION < 3
   pybuf = PyBuffer_New(size);
   PyObject_AsWriteBuffer(pybuf, (void *)&output, &size);
 #else
-  (void *)output = (void)PyByte =
-      PyByteArray_FromStringAndSize((void *)output, size);
+  (void *)output = PyByteArray_FromStringAndSize((void *)output, size);
 #endif
 
   /* TODO(jaq): remove this check */
   assert(PyObject_CheckBuffer(pybuf));
 
   /* die if we don't have the space */
-  if (size < MAD_SYNTH(self).pcm.length * 4) {
+  if (size < PYMAD_SYNTH(self).pcm.length * 4) {
     PyErr_SetString(PyExc_MemoryError, "allocated buffer too small");
     return NULL;
   }
@@ -536,17 +533,18 @@ static PyObject *py_madfile_read(PyObject *self, PyObject *args) {
    * consumer format -- use signed 16 bit big-endian ints on two channels.
    * Integer samples are temporarily stored in a buffer that is flushed when
    * full. */
-  for (i = 0; i < MAD_SYNTH(self).pcm.length; i++) {
+  for (i = 0; i < PYMAD_SYNTH(self).pcm.length; i++) {
     int16_t sample;
 
     /* left channel */
-    *(output++) = sample = madfixed_to_int16(MAD_SYNTH(self).pcm.samples[0][i]);
+    *(output++) = sample =
+        madfixed_to_int16(PYMAD_SYNTH(self).pcm.samples[0][i]);
 
     /* right channel.
      * if the decoded stream is monophonic then the right channel
      * is the same as the left one */
-    if (MAD_NCHANNELS(&MAD_FRAME(self).header) == 2)
-      sample = madfixed_to_int16(MAD_SYNTH(self).pcm.samples[1][i]);
+    if (MAD_NCHANNELS(&PYMAD_FRAME(self).header) == 2)
+      sample = madfixed_to_int16(PYMAD_SYNTH(self).pcm.samples[1][i]);
 
     *(output++) = sample;
   }
@@ -558,27 +556,27 @@ static PyObject *py_madfile_read(PyObject *self, PyObject *args) {
 
 /* return the MPEG layer */
 static PyObject *py_madfile_layer(PyObject *self, PyObject *args) {
-  return PyInt_FromLong(MAD_FRAME(self).header.layer);
+  return PyInt_FromLong(PYMAD_FRAME(self).header.layer);
 }
 
 /* return the channel mode */
 static PyObject *py_madfile_mode(PyObject *self, PyObject *args) {
-  return PyInt_FromLong(MAD_FRAME(self).header.mode);
+  return PyInt_FromLong(PYMAD_FRAME(self).header.mode);
 }
 
 /* return the stream samplerate */
 static PyObject *py_madfile_samplerate(PyObject *self, PyObject *args) {
-  return PyInt_FromLong(MAD_FRAME(self).header.samplerate);
+  return PyInt_FromLong(PYMAD_FRAME(self).header.samplerate);
 }
 
 /* return the stream bitrate */
 static PyObject *py_madfile_bitrate(PyObject *self, PyObject *args) {
-  return PyInt_FromLong(MAD_FRAME(self).header.bitrate);
+  return PyInt_FromLong(PYMAD_FRAME(self).header.bitrate);
 }
 
 /* return the emphasis value */
 static PyObject *py_madfile_emphasis(PyObject *self, PyObject *args) {
-  return PyInt_FromLong(MAD_FRAME(self).header.emphasis);
+  return PyInt_FromLong(PYMAD_FRAME(self).header.emphasis);
 }
 
 /* return the estimated playtime of the track, in milliseconds */
@@ -589,7 +587,7 @@ static PyObject *py_madfile_total_time(PyObject *self, PyObject *args) {
 /* return the current position in the track, in milliseconds */
 static PyObject *py_madfile_current_time(PyObject *self, PyObject *args) {
   return PyInt_FromLong(
-      mad_timer_count(MAD_TIMER(self), MAD_UNITS_MILLISECONDS));
+      mad_timer_count(PYMAD_TIMER(self), MAD_UNITS_MILLISECONDS));
 }
 
 /* seek playback to the given position, in milliseconds, from the start
@@ -630,11 +628,11 @@ static PyObject *py_madfile_seek_time(PyObject *self, PyObject *args) {
   }
   Py_DECREF(o);
 
-  mad_stream_init(&MAD_STREAM(self));
-  mad_frame_init(&MAD_FRAME(self));
-  mad_synth_init(&MAD_SYNTH(self));
-  mad_timer_reset(&MAD_TIMER(self));
-  mad_timer_set(&MAD_TIMER(self), 0, pos, 1000);
+  mad_stream_init(&PYMAD_STREAM(self));
+  mad_frame_init(&PYMAD_FRAME(self));
+  mad_synth_init(&PYMAD_SYNTH(self));
+  mad_timer_reset(&PYMAD_TIMER(self));
+  mad_timer_set(&PYMAD_TIMER(self), 0, pos, 1000);
 
   return Py_None;
 }
