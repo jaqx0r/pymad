@@ -5,12 +5,21 @@
  * Copyright (c) 2002 Jamie Wilkinson
  *
  * This program is free software, you may copy and/or modify as per
- * the GNU General Public License (version 2, or at your discretion,
- * any later version).  This is the same license as libmad.
+ * the GNU General Public License version 2.
  */
 
 #include <mad.h>
 #include "madmodule.h"
+
+#if PY_MAJOR_VERSION >= 3
+#define MOD_DEF(ob, name, doc, methods)                                        \
+  static struct PyModuleDef moduledef = {                                      \
+      PyModuleDef_HEAD_INIT, name, doc, -1, methods,                           \
+  };                                                                           \
+  ob = PyModule_Create(&moduledef);
+#else
+#define MOD_DEF(ob, name, doc, methods) ob = Py_InitModule3(name, methods, doc);
+#endif
 
 static PyMethodDef mad_methods[] = {
     {"MadFile", py_madfile_new, METH_VARARGS, ""}, {NULL, 0, 0, NULL}};
@@ -18,15 +27,24 @@ static PyMethodDef mad_methods[] = {
 /* this handy tool for passing C constants to Python-land from
  * http://starship.python.net/crew/arcege/extwriting/pyext.html
  */
+#if PY_MAJOR_VERSION >= 3
+#define PY_CONST(x) PyDict_SetItemString(dict, #x, PyLong_FromLong(MAD_##x))
+#else
 #define PY_CONST(x) PyDict_SetItemString(dict, #x, PyInt_FromLong(MAD_##x))
+#endif
 
-void initmad(void) {
+extern PyTypeObject py_madfile_t;
+
+static PyObject *moduleinit(void) {
   PyObject *module, *dict;
 
-  module = Py_InitModule("mad", mad_methods);
+  if (PyType_Ready(&py_madfile_t) < 0)
+    return NULL;
+
+  MOD_DEF(module, "mad", "", mad_methods);
   dict = PyModule_GetDict(module);
 
-  PyDict_SetItemString(dict, "__version__", PyString_FromString(VERSION));
+  PyDict_SetItemString(dict, "__version__", PyUnicode_FromString(VERSION));
 
   /* layer */
   PY_CONST(LAYER_I);
@@ -46,4 +64,12 @@ void initmad(void) {
 
   if (PyErr_Occurred())
     PyErr_SetString(PyExc_ImportError, "mad: init failed");
+
+  return module;
 }
+
+#if PY_MAJOR_VERSION < 3
+PyMODINIT_FUNC initmad(void) { moduleinit(); }
+#else
+PyMODINIT_FUNC PyInit_mad(void) { return moduleinit(); }
+#endif

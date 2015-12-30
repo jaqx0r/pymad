@@ -4,61 +4,58 @@
 
 import os
 import re
-import string
 import sys
 
 from distutils.core import setup
 from distutils.extension import Extension
 
 VERSION_MAJOR = 0
-VERSION_MINOR = 8
-pymad_version = str(VERSION_MAJOR) + "." + str(VERSION_MINOR)
+VERSION_MINOR = 9
+PYMAD_VERSION = str(VERSION_MAJOR) + '.' + str(VERSION_MINOR)
+
 
 def get_setup():
-    data = {}
-    r = re.compile(r'(\S+)\s*=\s*(.+)')
-    
-    if not os.path.isfile('Setup'):
-        print "No 'Setup' file. Perhaps you need to run the configure script."
-        sys.exit(1)
-        
-    f = open('Setup', 'r')
-        
-    for line in f.readlines():
-        m = r.search(line)
-        if not m:
-            print "Error in setup file:", line
-            sys.exit(1)
-        key = m.group(1)
-        val = m.group(2)
-        data[key] = val
-        
-    return data
+  """Read the configuration data from the Setup file."""
+  data = {}
+  expr = re.compile(r'(\S+)\s*=\s*(.+)')
 
-data = get_setup()
+  if not os.path.isfile('Setup'):
+    print("No 'Setup' file. Perhaps you need to run the configure script.")
+    sys.exit(1)
 
-defines = [('VERSION_MAJOR', VERSION_MAJOR),
+  setup_file = open('Setup', 'r')
+
+  for line in setup_file.readlines():
+    match = expr.search(line)
+    if not match:
+      print('Error in setup file:', line)
+      sys.exit(1)
+    key = match.group(1)
+    val = match.group(2)
+    data[key] = val
+
+  return data
+
+SETUP_DATA = get_setup()
+
+DEFINES = [('VERSION_MAJOR', VERSION_MAJOR),
            ('VERSION_MINOR', VERSION_MINOR),
-           ('VERSION', '"%s"' % pymad_version)]
+           ('VERSION', '"%s"' % PYMAD_VERSION)]
 
-if data['endian'] == "big":
-    defines.append(('BIGENDIAN', 1))
-
-madmodule = Extension(
-    name='madmodule',
+MADMODULE = Extension(
+    name='mad',
     sources=['src/madmodule.c', 'src/pymadfile.c', 'src/xing.c'],
-    define_macros = defines,
-    include_dirs=[data['mad_include_dir']],
-    library_dirs=[data['mad_lib_dir']],
-    libraries=string.split(data['mad_libs']))
+    define_macros=DEFINES,
+    include_dirs=[SETUP_DATA['mad_include_dir']],
+    library_dirs=[SETUP_DATA['mad_lib_dir']],
+    libraries=SETUP_DATA['mad_libs'].split())
 
-setup ( # Distribution metadata
-    name = "pymad",
-    version = pymad_version,
-    description = "A wrapper for the MAD libraries.",
-    author = "Jamie Wilkinson",
-    author_email = "jaq@spacepants.org",
-    url = "http://spacepants.org/src/pymad/",
-    license = "GPL",
-    
-    ext_modules = [madmodule])
+setup(  # Distribution metadata
+    name='pymad',
+    version=PYMAD_VERSION,
+    description='A wrapper for the MAD libraries.',
+    author='Jamie Wilkinson',
+    author_email='jaq@spacepants.org',
+    url='http://spacepants.org/src/pymad/',
+    license='GPL',
+    ext_modules=[MADMODULE])

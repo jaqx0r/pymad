@@ -4,18 +4,22 @@ import glob
 import os.path
 import socket
 import sys
-import urlparse
+
+try:
+    from urllib.parse import urlparse
+except ImportError:
+    from urlparse import urlparse
 
 import ao
 
-for p in glob.glob("build/lib.*"):
+for p in glob.glob('build/lib.*'):
     sys.path.insert(0, p)
 
 import mad
 
 
 def madradio(url):
-    scheme, netloc, path, params, query, fragment = urlparse.urlparse(url)
+    scheme, netloc, path, params, query, fragment = urlparse(url)
     try:
         host, port = netloc.split(':')
     except ValueError:
@@ -26,11 +30,11 @@ def madradio(url):
     sock.connect((host, int(port)))
     sock.send('GET %s HTTP/1.0\r\n\r\n' % path)
     reply = sock.recv(1500)
-    #print repr(reply)
+    # print repr(reply)
     file = sock.makefile()
     mf = mad.MadFile(file)
-    print "bitrate %lu bps" % mf.bitrate()
-    print "samplerate %d Hz" % mf.samplerate()
+    print(('bitrate %lu bps' % mf.bitrate()))
+    print(('samplerate %d Hz' % mf.samplerate()))
     dev = ao.AudioDevice(0, rate=mf.samplerate())
     while True:
         buffy = mf.read()
@@ -43,7 +47,7 @@ if __name__ == '__main__':
     try:
         url = sys.argv[1]
     except IndexError:
-        #url = 'http://62.67.195.6:8000' # lounge-radio.com
-        #url = 'http://63.241.4.18:8069' # xtcradio.com
-        url = 'http://mp2.somafm.com:2040' # somafm
+        # url = 'http://62.67.195.6:8000' # lounge-radio.com
+        # url = 'http://63.241.4.18:8069' # xtcradio.com
+        url = 'http://mp2.somafm.com:2040'  # somafm
     madradio(url)
