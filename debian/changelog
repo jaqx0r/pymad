@@ -1,6 +1,7 @@
 pymad (0.9-1) UNRELEASED; urgency=medium
 
   * New upstream release. 
+  * Add python3 to the list of supported versions for pybuild.
 
  -- Jamie Wilkinson <jaq@debian.org>  Wed, 30 Dec 2015 13:04:51 +1100
 
