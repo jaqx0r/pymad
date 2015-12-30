@@ -15,6 +15,7 @@
 #include <Python.h>
 #include <mad.h>
 
+/* The definition of the MadFile python object. */
 typedef struct {
   PyObject_HEAD PyObject *fobject;
   int close_file;
@@ -28,6 +29,7 @@ typedef struct {
   unsigned long total_length;
 } py_madfile; /* MadFile */
 
+/* Macros for accessing elements of the MadFile object, used internally. */
 #define PY_MADFILE(x) ((py_madfile *)x)
 #define PYMAD_STREAM(x) (PY_MADFILE(x)->stream)
 #define PYMAD_FRAME(x) (PY_MADFILE(x)->frame)
@@ -36,6 +38,7 @@ typedef struct {
 #define PYMAD_BUFSIZE(x) (PY_MADFILE(x)->bufsiz)
 #define PYMAD_TIMER(x) (PY_MADFILE(x)->timer)
 
+/* Exported methods. */
 static void py_madfile_dealloc(PyObject *self, PyObject *args);
 static PyObject *py_madfile_read(PyObject *self, PyObject *args);
 static PyObject *py_madfile_layer(PyObject *self, PyObject *args);
