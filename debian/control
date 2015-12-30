@@ -5,6 +5,7 @@ Maintainer: Jamie Wilkinson <jaq@debian.org>
 Build-Depends: debhelper (>= 9~), python-all-dev (>= 2.6.6-3~), libmad0-dev, dh-python, python-setuptools, python3-all-dev
 Standards-Version: 3.9.6
 X-Python-Version: >= 2.6
+X-Python3-Version: >= 2.6
 Homepage: http://spacepants.org/src/pymad
 Vcs-Browser: https://github.com/jaqx0r/pymad/tree/debian
 Vcs-Git: https://github.com/jaqx0r/pymad.git -b debian
@@ -15,8 +16,20 @@ Depends: ${python:Depends}, ${shlibs:Depends}, ${misc:Depends}
 Provides: ${python:Provides}
 Conflicts: python2.3-pymad (<< 0.5.4-3.1), python2.4-pymad (<< 0.5.4-3.1)
 Replaces: python2.3-pymad (<< 0.5.4-3.1), python2.4-pymad (<< 0.5.4-3.1)
-Description: Python wrapper to the MPEG Audio Decoder library
+Description: Python wrapper to the MPEG Audio Decoder library (Python 3)
  This module makes the MAD MP3 decoder library available to Python
  programs.  It provides a high-level API to the MAD functions, that make
  reading audio data from an MPEG stream simple.
+ .
+ This package installs the library for Python 2.
 
+Package: python3-pymad
+Architecture: any
+Depends: ${python3:Depends}, ${shlibs:Depends}, ${misc:Depends}
+Provides: ${python3:Provides}
+Description: Python wrapper to the MPEG Audio Decoder library (Python 3)
+ This module makes the MAD MP3 decoder library available to Python 3
+ programs.  It provides a high-level API to the MAD functions, that make
+ reading audio data from an MPEG stream simple.
+ .
+ This package installs the library for Python 3.
