@@ -310,7 +310,7 @@ static unsigned long calc_total_time(PyObject *self) {
   return r;
 }
 
-/* convert the mad format to an int16_t */
+/* convert the MAD fixed point format to a signed 16 bit int */
 static int16_t madfixed_to_int16(mad_fixed_t sample) {
   /* A fixed point number is formed of the following bit pattern:
    *
@@ -355,6 +355,9 @@ static PyObject *py_madfile_read(PyObject *self, PyObject *args) {
   int nextframe = 0;
   int result;
   char errmsg[ERROR_MSG_SIZE];
+#if PY_MAJOR_VERSION < 3
+  Py_buffer view;
+#endif
 
   /* if we are at EOF, then return None */
   // FIXME: move to if null read
@@ -514,7 +517,8 @@ static PyObject *py_madfile_read(PyObject *self, PyObject *args) {
   pybuf = PyBuffer_New(size);
   PyObject_AsWriteBuffer(pybuf, (void *)&output, &size);
 #else
-  pybuf = PyBytes_FromStringAndSize((void*)output, size);
+  (void *)output = (void)PyByte =
+      PyByteArray_FromStringAndSize((void *)output, size);
 #endif
 
   /* TODO(jaq): remove this check */
