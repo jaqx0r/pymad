@@ -5,7 +5,7 @@ Maintainer: Jamie Wilkinson <jaq@debian.org>
 Build-Depends: debhelper (>= 9~), python-all-dev (>= 2.6.6-3~), libmad0-dev, dh-python, python-setuptools, python3-all-dev
 Standards-Version: 3.9.6
 X-Python-Version: >= 2.6
-X-Python3-Version: >= 2.6
+X-Python3-Version: >= 3.0
 Homepage: http://spacepants.org/src/pymad
 Vcs-Browser: https://github.com/jaqx0r/pymad/tree/debian
 Vcs-Git: https://github.com/jaqx0r/pymad.git -b debian
