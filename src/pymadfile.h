@@ -22,8 +22,8 @@ typedef struct {
   struct mad_frame frame;
   struct mad_synth synth;
   mad_timer_t timer;
-  unsigned char *buffy;
-  unsigned int bufsiz;
+  unsigned char *input_buffer;
+  unsigned int bufsize;
   unsigned int framecount;
   unsigned long total_length;
 } py_madfile; /* MadFile */
@@ -33,8 +33,8 @@ typedef struct {
 #define PYMAD_STREAM(x) (PY_MADFILE(x)->stream)
 #define PYMAD_FRAME(x) (PY_MADFILE(x)->frame)
 #define PYMAD_SYNTH(x) (PY_MADFILE(x)->synth)
-#define PYMAD_BUFFER(x) (PY_MADFILE(x)->buffy)
-#define PYMAD_BUFSIZE(x) (PY_MADFILE(x)->bufsiz)
+#define PYMAD_BUFFER(x) (PY_MADFILE(x)->input_buffer)
+#define PYMAD_BUFSIZE(x) (PY_MADFILE(x)->bufsize)
 #define PYMAD_TIMER(x) (PY_MADFILE(x)->timer)
 
 /* Exported methods. */
