@@ -1,11 +1,11 @@
-pymad (0.9-1) UNRELEASED; urgency=medium
+pymad (0.9-1) unstable; urgency=medium
 
   * New upstream release. 
   * Add python3 to the list of supported versions for pybuild.
   * Add python3-all-dev to build dependencies.
   * Add debug packages for both python2 and python3.
 
- -- Jamie Wilkinson <jaq@debian.org>  Wed, 30 Dec 2015 13:04:51 +1100
+ -- Jamie Wilkinson <jaq@debian.org>  Wed, 30 Dec 2015 13:57:12 +1100
 
 pymad (0.8-4) unstable; urgency=medium
 
