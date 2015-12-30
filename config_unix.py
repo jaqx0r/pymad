@@ -7,7 +7,7 @@ import sys
 
 
 def msg_checking(msg):
-  print('Checking {}... '.format(msg), end='')
+  print('Checking {0}... '.format(msg), end='')
 
 
 def execute(cmd, display=0):
