@@ -159,10 +159,10 @@ PyObject *py_madfile_new(PyObject *self, PyObject *args) {
   PyObject *fobject = NULL;
   char *initial;
   long ibytes = 0;
-  unsigned long int bufsiz = MAD_BUF_SIZE;
+  unsigned long int bufsize = MAD_BUF_SIZE;
   int n;
 
-  if (PyArg_ParseTuple(args, "s|l:MadFile", &fname, &bufsiz)) {
+  if (PyArg_ParseTuple(args, "s|l:MadFile", &fname, &bufsize)) {
 #if PY_MAJOR_VERSION < 3
     fobject = PyFile_FromString(fname, "r");
 #else
@@ -188,11 +188,11 @@ PyObject *py_madfile_new(PyObject *self, PyObject *args) {
   } else
     return NULL;
 
-  /* bufsiz must be an integer multiple of 4 */
-  if ((n = bufsiz % 4))
-    bufsiz -= n;
-  if (bufsiz <= 4096)
-    bufsiz = 4096;
+  /* bufsize must be an integer multiple of 4 */
+  if ((n = bufsize % 4))
+    bufsize -= n;
+  if (bufsize <= 4096)
+    bufsize = 4096;
 
   mf = PyObject_NEW(py_madfile, &py_madfile_t);
   Py_INCREF(fobject);
@@ -207,8 +207,8 @@ PyObject *py_madfile_new(PyObject *self, PyObject *args) {
 
   mf->framecount = 0;
 
-  mf->buffy = malloc(bufsiz * sizeof(unsigned char));
-  mf->bufsiz = bufsiz;
+  mf->input_buffer = malloc(bufsize * sizeof(unsigned char));
+  mf->bufsize = bufsize;
 
   /* explicitly call read to fill the buffer and have the frame header
    * data immediately available to the caller */
