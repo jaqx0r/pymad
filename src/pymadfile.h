@@ -5,8 +5,7 @@
  * Copyright (c) 2002 Jamie Wilkinson
  *
  * This program is free software, you may copy and/or modify as per
- * the GNU General Public License (version 2, or at your discretion,
- * any later version).  This is the same license as libmad.
+ * the GNU General Public License version 2.
  */
 
 #ifndef __PY_MADFILE_H__
