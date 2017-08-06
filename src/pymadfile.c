@@ -348,7 +348,8 @@ static int16_t madfixed_to_int16(mad_fixed_t sample) {
 
 static PyObject *py_madfile_read(PyObject *self, PyObject *args) {
   PyObject *pybuf;        /* return object containing output buffer*/
-  int16_t *output = NULL; /* output buffer */
+  int16_t *output_buffer = NULL; /* output buffer */
+  int16_t *output = NULL;
   unsigned int i;
   Py_ssize_t size;
   int nextframe = 0;
@@ -510,13 +511,12 @@ static PyObject *py_madfile_read(PyObject *self, PyObject *args) {
    * so make it 2 times as big as the number of samples */
   size = PYMAD_SYNTH(self).pcm.length * 2 * sizeof(int16_t);
 
-  output = malloc(size);
-  if (!output) {
+  output = output_buffer = malloc(size);
+  if (!output_buffer) {
     PyErr_SetString(PyExc_MemoryError,
                     "could not allocate memory for output buffer");
     return NULL;
   }
-  pybuf = PyByteArray_FromStringAndSize((const char *)output, size);
 
   /* die if we don't have the space */
   if (size < PYMAD_SYNTH(self).pcm.length * 4) {
@@ -547,6 +547,9 @@ static PyObject *py_madfile_read(PyObject *self, PyObject *args) {
   }
 
   Py_END_ALLOW_THREADS;
+
+  pybuf = PyByteArray_FromStringAndSize((const char *)output_buffer, size);
+  free(output_buffer);
 
   return pybuf;
 }
