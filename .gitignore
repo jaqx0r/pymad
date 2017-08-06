@@ -1,5 +1,6 @@
 MANIFEST
 Setup
+setup.cfg
 dist
 build
 build-stamp
