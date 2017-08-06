@@ -45,11 +45,8 @@ int main ()
 def find_mad(mad_prefix='/usr/local', enable_madtest=1):
   """A rough translation of mad.m4"""
 
-  mad_libs = []
-
   mad_include_dir = mad_prefix + '/include'
   mad_lib_dir = mad_prefix + '/lib'
-  mad_libs = 'mad'
 
   msg_checking('for MAD')
 
@@ -68,17 +65,17 @@ def find_mad(mad_prefix='/usr/local', enable_madtest=1):
 
   print('success')
 
-  return {'mad_libs': mad_libs,
-          'mad_lib_dir': mad_lib_dir,
-          'mad_include_dir': mad_include_dir}
+  return {'library_dirs': mad_lib_dir,
+          'include_dirs': mad_include_dir}
 
 
 def write_data(data):
-  setup_file = open('Setup', 'w')
+  setup_file = open('setup.cfg', 'w')
+  setup_file.write('[build_ext]\n')
   for item in list(data.items()):
-    setup_file.write('%s = %s\n' % item)
+    setup_file.write('%s=%s\n' % item)
   setup_file.close()
-  print('Wrote Setup file')
+  print('Wrote setup.cfg file')
 
 
 def print_help():
