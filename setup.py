@@ -10,7 +10,7 @@ from distutils.core import setup
 from distutils.extension import Extension
 
 VERSION_MAJOR = 0
-VERSION_MINOR = 9
+VERSION_MINOR = 10
 PYMAD_VERSION = str(VERSION_MAJOR) + '.' + str(VERSION_MINOR)
 
 
