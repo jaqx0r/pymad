@@ -1,3 +1,3 @@
 single-debian-patch
-extend-diff-ignore = '^Setup|dist.*$'
+extend-diff-ignore = '^dist.*$'
 single-debian-patch
