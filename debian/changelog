@@ -1,6 +1,7 @@
 pymad (0.10-1) UNRELEASED; urgency=medium
 
   * New upstream release.
+  * Bump Standards-Version.
 
  -- Jamie Wilkinson <jaq@debian.org>  Wed, 09 Aug 2017 16:11:02 +1000
 
