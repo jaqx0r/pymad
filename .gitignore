@@ -30,3 +30,4 @@ debian/python3-pymad-dbg
 *.so
 .pc
 debian/patches
+debian/.debhelper
