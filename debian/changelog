@@ -1,11 +1,11 @@
-pymad (0.10-1) UNRELEASED; urgency=medium
+pymad (0.10-1) unstable; urgency=medium
 
   * New upstream release.
   * Bump Standards-Version.
   * Bump dh compat level to 9.
   * Fix extend-diff-ignore in source options.
 
- -- Jamie Wilkinson <jaq@debian.org>  Wed, 09 Aug 2017 16:11:02 +1000
+ -- Jamie Wilkinson <jaq@debian.org>  Sat, 12 Aug 2017 21:52:24 +1000
 
 pymad (0.9-1) unstable; urgency=medium
 
