@@ -1,3 +1,2 @@
 single-debian-patch
 extend-diff-ignore = '^dist.*$'
-single-debian-patch
