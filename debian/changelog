@@ -1,3 +1,11 @@
+pymad (0.10-3~2.gbp5dbe7e) UNRELEASED; urgency=medium
+
+  ** SNAPSHOT build @5dbe7e11cad716e94a39baffa71254ef178741e6 **
+
+  * Update python versions in travis config.
+
+ -- Jamie Wilkinson <jaq@debian.org>  Tue, 19 Nov 2019 02:45:34 +1100
+
 pymad (0.10-2) unstable; urgency=medium
 
   * Builds the debug package correctly per 
