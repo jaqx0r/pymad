@@ -2,10 +2,8 @@ Source: pymad
 Section: python
 Priority: optional
 Maintainer: Jamie Wilkinson <jaq@debian.org>
-Build-Depends: debhelper (>= 9~), python-all-dev (>= 2.6.6-3~), libmad0-dev, dh-python, python-setuptools, python3-all-dev
-Standards-Version: 4.0.0
-X-Python-Version: >= 2.6
-X-Python3-Version: >= 3.0
+Build-Depends: debhelper (>= 11), python-all-dev (>= 2.6.6-3~), python-all-dbg (>= 2.6.6-3~), libmad0-dev, dh-python, python-setuptools, python3-all-dev, python3-all-dbg, python3-setuptools, dpkg-dev (>= 1.16.1.1~)
+Standards-Version: 4.4.0
 Homepage: http://spacepants.org/src/pymad
 Vcs-Browser: https://github.com/jaqx0r/pymad/tree/debian
 Vcs-Git: https://github.com/jaqx0r/pymad.git -b debian
@@ -37,8 +35,8 @@ Description: Python wrapper to the MPEG Audio Decoder library (Python 3)
 Package: python-pymad-dbg
 Architecture: any
 Section: debug
-Priority: extra
-Depends: ${python:Depends}, ${shlibs:Depends}, ${misc:Depends}, python-pymad
+Depends: ${python:Depends}, ${shlibs:Depends}, ${misc:Depends}, python-pymad (= ${binary:Version})
+Recommends: python-dbg
 Provides: ${python:Provides}
 Description: Python wrapper to the MPEG Audio Decoder library (Python 2 debug)
  This module makes the MAD MP3 decoder library available to Python
@@ -50,9 +48,9 @@ Description: Python wrapper to the MPEG Audio Decoder library (Python 2 debug)
 Package: python3-pymad-dbg
 Architecture: any
 Section: debug
-Priority: extra
-Depends: ${python3:Depends}, ${shlibs:Depends}, ${misc:Depends}, python3-pymad
+Depends: ${python3:Depends}, ${shlibs:Depends}, ${misc:Depends}, python3-pymad (= ${binary:Version})
 Provides: ${python3:Provides}
+Recommends: python3-dbg
 Description: Python wrapper to the MPEG Audio Decoder library (Python 3 debug)
  This module makes the MAD MP3 decoder library available to Python 3
  programs.  It provides a high-level API to the MAD functions, that make
