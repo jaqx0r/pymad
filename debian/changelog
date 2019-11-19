@@ -1,18 +1,16 @@
-pymad (0.10-3~15.gbp664c75) UNRELEASED; urgency=medium
+pymad (0.10-3) unstable; urgency=medium
 
-  ** SNAPSHOT build @664c753a08520172a4245b4bcbd3d403a1f9a13b **
-
-  * Update python versions in travis config.
-  * Update standards-version.
+  * Update standards-version to 4.4.0.
   * Add debian/gbp.conf.
   * Remove X-Python{,3}-Version as no longer necessary to build.
   * Bump dh compat to 11.
   * Address hardening-no-bindnow lintian warning, by turning on hardening build flags.
-  * Address hardening-no-bindnow lintian warning, by turning on hardening build flags.
   * Move debug packages to priority optional as extra has not existed for a long time.
-  * Move debug packages to priority optional as extra has not existed for a long time.
+  * Bump dpkg-dev build dep for DEB_BUILD_MAINT_OPTIONS.
+  * Add autopkgtest.
+  * Remove unused debian/dirs
 
- -- Jamie Wilkinson <jaq@debian.org>  Wed, 20 Nov 2019 01:48:33 +1100
+ -- Jamie Wilkinson <jaq@debian.org>  Wed, 20 Nov 2019 03:12:36 +1100
 
 pymad (0.10-2) unstable; urgency=medium
 
