@@ -1,10 +1,15 @@
-pymad (0.10-3~2.gbp5dbe7e) UNRELEASED; urgency=medium
+pymad (0.10-3~4.gbpead109) UNRELEASED; urgency=medium
 
-  ** SNAPSHOT build @5dbe7e11cad716e94a39baffa71254ef178741e6 **
+  ** SNAPSHOT build @ead109a826f67a7c3204f531edcc8d2954404de0 **
 
   * Update python versions in travis config.
+  * Update standards-version.
+  * Add debian/gbp.conf.
+  * Remove X-Python{,3}-Version as no longer necessary to build.
+  * Bump dh compat to 11.
+  * Address hardening-no-bindnow lintian warning, by turning on hardening build flags.
 
- -- Jamie Wilkinson <jaq@debian.org>  Tue, 19 Nov 2019 02:45:34 +1100
+ -- Jamie Wilkinson <jaq@debian.org>  Wed, 20 Nov 2019 00:49:22 +1100
 
 pymad (0.10-2) unstable; urgency=medium
 
