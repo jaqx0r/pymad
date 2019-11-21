@@ -2,24 +2,17 @@ Source: pymad
 Section: python
 Priority: optional
 Maintainer: Jamie Wilkinson <jaq@debian.org>
-Build-Depends: debhelper (>= 11), python-all-dev (>= 2.6.6-3~), python-all-dbg (>= 2.6.6-3~), libmad0-dev, dh-python, python-setuptools, python3-all-dev, python3-all-dbg, python3-setuptools, dpkg-dev (>= 1.16.1.1~)
+Build-Depends: debhelper (>= 11),
+ libmad0-dev,
+ dh-python,
+ python3-all-dev,
+ python3-all-dbg,
+ python3-setuptools,
+ dpkg-dev (>= 1.16.1.1~)
 Standards-Version: 4.4.0
 Homepage: http://spacepants.org/src/pymad
 Vcs-Browser: https://github.com/jaqx0r/pymad/tree/debian
 Vcs-Git: https://github.com/jaqx0r/pymad.git -b debian
-
-Package: python-pymad
-Architecture: any
-Depends: ${python:Depends}, ${shlibs:Depends}, ${misc:Depends}
-Provides: ${python:Provides}
-Conflicts: python2.3-pymad (<< 0.5.4-3.1), python2.4-pymad (<< 0.5.4-3.1)
-Replaces: python2.3-pymad (<< 0.5.4-3.1), python2.4-pymad (<< 0.5.4-3.1)
-Description: Python wrapper to the MPEG Audio Decoder library (Python 2)
- This module makes the MAD MP3 decoder library available to Python
- programs.  It provides a high-level API to the MAD functions, that make
- reading audio data from an MPEG stream simple.
- .
- This package installs the library for Python 2.
 
 Package: python3-pymad
 Architecture: any
@@ -31,19 +24,6 @@ Description: Python wrapper to the MPEG Audio Decoder library (Python 3)
  reading audio data from an MPEG stream simple.
  .
  This package installs the library for Python 3.
-
-Package: python-pymad-dbg
-Architecture: any
-Section: debug
-Depends: ${python:Depends}, ${shlibs:Depends}, ${misc:Depends}, python-pymad (= ${binary:Version})
-Recommends: python-dbg
-Provides: ${python:Provides}
-Description: Python wrapper to the MPEG Audio Decoder library (Python 2 debug)
- This module makes the MAD MP3 decoder library available to Python
- programs.  It provides a high-level API to the MAD functions, that make
- reading audio data from an MPEG stream simple.
- .
- This package installs the debugging symbols for the library for Python 2.
 
 Package: python3-pymad-dbg
 Architecture: any

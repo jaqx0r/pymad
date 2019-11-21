@@ -12,8 +12,7 @@ export PYBUILD_NAME=pymad
 export PYBUILD_BEFORE_CLEAN={interpreter} ./config_unix.py --prefix=/usr
 
 %:
-	dh $@ --with=python2,python3 --buildsystem=pybuild
+	dh $@ --with=python3 --buildsystem=pybuild
 
 override_dh_strip:
-	dh_strip -ppython-pymad  --dbg-package=python-pymad-dbg
 	dh_strip -ppython3-pymad --dbg-package=python3-pymad-dbg
