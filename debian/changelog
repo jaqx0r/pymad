@@ -4,7 +4,7 @@ pymad (0.10-4) unstable; urgency=medium
   * Fix dependency for autopkgtest.
   * Ignore more files that are in git but not in the source tarball.
 
- -- Jamie Wilkinson <jaq@debian.org>  Sat, 23 Nov 2019 10:21:07 +1100
+ -- Jamie Wilkinson <jaq@debian.org>  Sat, 23 Nov 2019 10:29:02 +1100
 
 pymad (0.10-3) unstable; urgency=medium
 
