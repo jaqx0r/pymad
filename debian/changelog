@@ -1,8 +1,9 @@
 pymad (0.10-4) unstable; urgency=medium
 
   * Remove python2 from pymad. (Closes: 937475)
+  * Fix dependency for autopkgtest.
 
- -- Jamie Wilkinson <jaq@debian.org>  Sat, 23 Nov 2019 09:06:08 +1100
+ -- Jamie Wilkinson <jaq@debian.org>  Sat, 23 Nov 2019 09:17:07 +1100
 
 pymad (0.10-3) unstable; urgency=medium
 
