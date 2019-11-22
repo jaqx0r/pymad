@@ -4,4 +4,4 @@ Test-Command: set -e
  ; echo "Testing with $py:"
  ; $py -c "import mad; print(mad)"
  ; done
-Depends: python3-all, python3-mad
+Depends: python3-all, python3-pymad
