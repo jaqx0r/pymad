@@ -22,8 +22,8 @@ pymad (0.10-3) unstable; urgency=medium
 
 pymad (0.10-2) unstable; urgency=medium
 
-  * Builds the debug package correctly per 
-    https://wiki.debian.org/Python/DbgBuilds (Closes: #856717) 
+  * Builds the debug package correctly per
+    https://wiki.debian.org/Python/DbgBuilds (Closes: #856717)
 
  -- Jamie Wilkinson <jaq@debian.org>  Wed, 30 Aug 2017 11:25:00 +1000
 
@@ -38,7 +38,7 @@ pymad (0.10-1) unstable; urgency=medium
 
 pymad (0.9-1) unstable; urgency=medium
 
-  * New upstream release. 
+  * New upstream release.
   * Add python3 to the list of supported versions for pybuild.
   * Add python3-all-dev to build dependencies.
   * Add debug packages for both python2 and python3.
@@ -47,27 +47,27 @@ pymad (0.9-1) unstable; urgency=medium
 
 pymad (0.8-4) unstable; urgency=medium
 
-  * Add control fields for VCS information. 
+  * Add control fields for VCS information.
 
  -- Jamie Wilkinson <jaq@debian.org>  Wed, 20 May 2015 08:39:30 +1000
 
 pymad (0.8-3) unstable; urgency=medium
 
   * Change the rules to generate the Setup file BEFORE_CLEAN, instead
-    of BEFORE_CONFIGURE.  Thanks, Dejan Latinovic!  (Closes: #779634) 
+    of BEFORE_CONFIGURE.  Thanks, Dejan Latinovic!  (Closes: #779634)
 
  -- Jamie Wilkinson <jaq@debian.org>  Tue, 19 May 2015 08:42:56 +1000
 
 pymad (0.8-2) unstable; urgency=medium
 
-  * Fix the pre-configure command to build Setup correctly.  (Closes: #779634) 
+  * Fix the pre-configure command to build Setup correctly.  (Closes: #779634)
 
  -- Jamie Wilkinson <jaq@debian.org>  Sat, 14 Mar 2015 22:18:45 +1100
 
 pymad (0.8-1) unstable; urgency=medium
 
-  * New upstream release. 
-  * Bump standards version to 3.9.6. 
+  * New upstream release.
+  * Bump standards version to 3.9.6.
   * Add build-dep on dh-python.
   * Rewrote debian/rules to use pybuild best practice for python
     libraries.
@@ -82,10 +82,10 @@ pymad (0.7-1) unstable; urgency=low
   * New upstream version.
   * Acknowledge NMUs.  Thanks Jakub and Sandro! (Closes: #620280, #556153)
   * Update debian/watch with new URI for tarball.
-  * Updated standards version to 3.9.2 
-  * Transition from pysupprt to dh_python2. 
-  * Fix debhelper misc:depends to appease lintian. 
-  * Remove obsolete cleanup from debian/rules. 
+  * Updated standards version to 3.9.2
+  * Transition from pysupprt to dh_python2.
+  * Fix debhelper misc:depends to appease lintian.
+  * Remove obsolete cleanup from debian/rules.
 
  -- Jamie Wilkinson <jaq@debian.org>  Thu, 14 Mar 2013 09:19:26 +0000
 
