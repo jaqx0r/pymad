@@ -1,6 +1,7 @@
 pymad (0.10-5) UNRELEASED; urgency=low
 
   * Trim trailing whitespace.
+  * Use secure URI in Homepage field.
 
  -- Debian Janitor <janitor@jelmer.uk>  Sun, 31 May 2020 02:19:44 -0000
 
