@@ -2,7 +2,7 @@ Source: pymad
 Section: python
 Priority: optional
 Maintainer: Jamie Wilkinson <jaq@debian.org>
-Build-Depends: debhelper (>= 11),
+Build-Depends: debhelper (>= 12~),
  libmad0-dev,
  dh-python,
  python3-all-dev,
