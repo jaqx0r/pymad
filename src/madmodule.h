@@ -13,6 +13,11 @@
 
 #include <Python.h>
 
+#ifndef VERSION
+/* Release build provides this as a compiler flag. */
+#define VERSION "0-dev"
+#endif
+
 /* module accessible functions */
 PyObject *py_madfile_new(PyObject *, PyObject *);
 
