@@ -25,8 +25,6 @@ MADMODULE = Extension(
     libraries=['mad'])
 
 setup(  # Distribution metadata
-    name='pymad',
-    version=PYMAD_VERSION,
     description='A wrapper for the MAD libraries.',
     author='Jamie Wilkinson',
     author_email='jaq@spacepants.org',
