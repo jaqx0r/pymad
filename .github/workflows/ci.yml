@@ -5,13 +5,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
+      - uses: actions/setup-python@v4
         with:
           python-version: '3.x'
       - name: install dependencies
-        run: sudo apt-get install -y libmad0-dev
+        run: |
+          sudo apt-get install -y libmad0-dev
+          python -m pip install --upgrade pip
+          python -m pip install --upgrade build
       - name: build
         run: |
           python -m build
           python setup.py build_ext --inplace
-          python -m pytest
+      - name: test
+        run: |
+          pytest
