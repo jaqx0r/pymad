@@ -1,17 +1,40 @@
 name: CI
-on: [push, pull_request]
+on:
+  push:
+    tags:
+      - v*
+    branches:
+      - main
+  pull_request:
+
+permissions:
+  # none-all, which doesn't exist, but
+  # https://docs.github.com/en/actions/reference/authentication-in-a-workflow#using-the-github_token-in-a-workflow
+  # implies that the token still gets created, and
+  # https://docs.github.com/en/actions/security-guides/automatic-token-authentication#permissions-for-the-github_token
+  # shows what the default permissions are, which are more than `none`.
+  # Elsewhere we learn that any permission not mentioned here gets turned to
+  # `none`.  So setting a single permission to none causes all to be `none`.
+  actions: none
+
 jobs:
   test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
+        with:
+          fetch-depth: 0 # get all tags
+      - uses: actions/setup-python@v4
         with:
           python-version: '3.x'
       - name: install dependencies
-        run: sudo apt-get install -y libmad0-dev
-      - name: build
         run: |
-          python config_unix.py
-          python setup.py build
-          python -m compileall -f .
+          sudo apt-get install -y libmad0-dev
+          python -m pip install --upgrade pip
+          python -m pip install --upgrade pytest
+      - name: install
+        run: |
+          python -m pip install .
+      - name: test
+        run: |
+          pytest

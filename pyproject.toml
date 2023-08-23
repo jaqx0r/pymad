@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=45", "setuptools_scm[toml]>=6.2"]
+
+[project]
+name = "pymad"
+dynamic = ["version"]
+description = "A wrapper for the MAD (mpeg audio decoder) library."
+authors = [
+  {name="Jamie Wilkinson",email="jaq@spacepants.org"},
+]
+readme = "README.md"
+license = {text = "GPL-2.0"}
+
+[project.urls]
+Homepage = "https://spacepants.org/src/pymad"
+Repository = "https://github.com/jaqx0r/pymad"
+
+[tool.setuptools_scm]
+tag_regex = '^version/(?P<version>[^\+]+)(?P<suffix>.*)?$'
