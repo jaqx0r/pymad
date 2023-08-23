@@ -21,10 +21,9 @@ jobs:
         run: |
           sudo apt-get install -y libmad0-dev
           python -m pip install --upgrade pip
-          python -m pip install --upgrade build
+          python -m pip install .
       - name: build
         run: |
-          python -m build
           python setup.py build_ext --inplace
       - name: test
         run: |
