@@ -12,6 +12,6 @@ jobs:
         run: sudo apt-get install -y libmad0-dev
       - name: build
         run: |
-          python config_unix.py
-          python setup.py build
-          python -m compileall -f .
+          python -m build
+          python setup.py build_ext --inplace
+          python -m pytest
