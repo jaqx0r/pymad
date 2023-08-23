@@ -7,6 +7,16 @@ on:
       - main
   pull_request:
 
+permissions:
+  # none-all, which doesn't exist, but
+  # https://docs.github.com/en/actions/reference/authentication-in-a-workflow#using-the-github_token-in-a-workflow
+  # implies that the token still gets created, and
+  # https://docs.github.com/en/actions/security-guides/automatic-token-authentication#permissions-for-the-github_token
+  # shows what the default permissions are, which are more than `none`.
+  # Elsewhere we learn that any permission not mentioned here gets turned to
+  # `none`.  So setting a single permission to none causes all to be `none`.
+  actions: none
+
 jobs:
   test:
     runs-on: ubuntu-latest
