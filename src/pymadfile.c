@@ -45,15 +45,14 @@
  */
 
 #include <Python.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <errno.h>
 #include <assert.h>
+#include <errno.h>
 #include <fcntl.h>
 #include <stdint.h>
+#include <stdio.h>
 #include <string.h>
-#include <sys/stat.h>
 #include <sys/mman.h>
+#include <sys/stat.h>
 
 #include "madmodule.h"
 #include "pymadfile.h"
@@ -347,7 +346,7 @@ static int16_t madfixed_to_int16(mad_fixed_t sample) {
 }
 
 static PyObject *py_madfile_read(PyObject *self, PyObject *args) {
-  PyObject *pybuf;        /* return object containing output buffer*/
+  PyObject *pybuf;               /* return object containing output buffer*/
   int16_t *output_buffer = NULL; /* output buffer */
   int16_t *output = NULL;
   unsigned int i;
