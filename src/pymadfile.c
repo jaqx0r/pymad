@@ -169,7 +169,7 @@ PyObject *py_madfile_new(PyObject *self, PyObject *args) {
     if ((fd = open(fname, O_RDONLY)) < 0) {
       return NULL;
     }
-    fobject = PyFile_FromFd(fd, fname, "r", -1, NULL, NULL, NULL, 1);
+    fobject = PyFile_FromFd(fd, fname, "rb", -1, NULL, NULL, NULL, 1);
 #endif
     close_file = 1;
     if (fobject == NULL) {
