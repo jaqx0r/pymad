@@ -1,10 +1,11 @@
 #!/usr/bin/python
 
-from __future__ import print_function
-
 import glob
 import os.path
 import sys
+
+import ao
+print('ao:', ao.__file__)
 
 try:
     from urllib.request import urlopen
@@ -14,15 +15,15 @@ except ImportError:
 print(sys.version_info)
 PYTHON_VERSION = "{}.{}".format(sys.version_info.major, sys.version_info.minor)
 
-for p in glob.glob("build/lib.*-" + PYTHON_VERSION):
+for p in glob.glob("../build/lib.*-" + PYTHON_VERSION):
     print("Inserting build path {}".format(p))
     sys.path.insert(0, p)
 
-print((sys.path))
+print('paths: ', sys.path)
 
 import mad
 
-print(mad.__file__)
+print('mad:', mad.__file__)
 
 
 def play(u):
@@ -60,25 +61,28 @@ def play(u):
     print(("bitrate %lu bps" % mf.bitrate()))
     print(("samplerate %d Hz" % mf.samplerate()))
     sys.stdout.flush()
-    #millis = mf.total_time()
-    #secs = millis / 1000
-    # print "total time %d ms (%dm%2ds)" % (millis, secs / 60, secs % 60)
+    millis = mf.total_time()
+    secs = millis / 1000
+    print("total time %d ms (%dm%2ds)" % (millis, secs / 60, secs % 60))
 
-    #dev = ao.AudioDevice(0, rate=mf.samplerate())
+    dev = ao.AudioDevice(0, rate=mf.samplerate())
     while 1:
         buffy = mf.read()
         if buffy is None:
             break
-        #dev.play(buffy, len(buffy))
-        # print "current time: %d ms" % mf.current_time()
+        print('buffy:', len(buffy))
+        dev.play(bytes(buffy))
+        print("current time: %d ms" % mf.current_time())
+
 
 if __name__ == "__main__":
     print(("pymad version %s" % mad.__version__))
     for filename in sys.argv[1:]:
         if os.path.exists(filename):
-            filename = "file://" + filename
-        u = urlopen(filename)
-        if u:
+          play(filename)
+        else:
+          u = urlopen(filename)
+          if u:
             # if os.path.exists(file):
             print(("playing %s" % filename))
             play(u)
