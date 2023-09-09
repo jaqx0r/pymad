@@ -79,9 +79,10 @@ if __name__ == "__main__":
     print(("pymad version %s" % mad.__version__))
     for filename in sys.argv[1:]:
         if os.path.exists(filename):
-            filename = "file://" + filename
-        u = urlopen(filename)
-        if u:
+          play(filename)
+        else:
+          u = urlopen(filename)
+          if u:
             # if os.path.exists(file):
             print(("playing %s" % filename))
             play(u)
