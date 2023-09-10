@@ -16,4 +16,3 @@ Homepage = "https://spacepants.org/src/pymad"
 Repository = "https://github.com/jaqx0r/pymad"
 
 [tool.setuptools_scm]
-tag_regex = '^version/(?P<version>[^\+]+)(?P<suffix>.*)?$'
