@@ -32,27 +32,9 @@ while 1:
 ```
 
 
-To build, you need the distutils package, availible from
-http://www.python.org/sigs/distutils-sig/download.html (it comes with
-Python 2.0). Run `python setup.py build` to build and then as root run
-`python setup.py install`.
+The latest release is available for download at https://pypi.org/project/pymad/
+or via `pip install pymad`.  They're replicated on GitHub in the Releases section.
 
-if you've installed your mad stuff someplace weird you may need to run
-the config_unix.py script, passing it a `--prefix` value to create a
-`setup.cfg` file with the correct include and link dirs:
+To build locally, the usual `python -m build` or `python -m pip install .` works.
 
-```shell
-# python config_unix.py --prefix /usr/local
-# python setup.py build
-# python setup.py install --prefix /usr/local
-```
-
-Remember to make sure `/usr/local/python/site-packages/` is in your
-Python search path in that example.
-
-Alternately, you can write `setup.cfg` yourself. E.g.:
-
-    [build_ext]
-    library_dirs=/opt/mad/lib
-    include_dirs=/opt/mad/include
-    libraries=name_of_library_mad_might_depend_on
+The tests require manual interaction (because you want to listen to the decoded output) and requires PyAO on Linux.
