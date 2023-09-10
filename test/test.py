@@ -27,6 +27,7 @@ print('mad:', mad.__file__)
 
 
 def play(u):
+    print('opening', u)
     mf = mad.MadFile(u)
 
     if mf.layer() == mad.LAYER_I:
