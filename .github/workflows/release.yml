@@ -18,7 +18,7 @@ jobs:
       - run: sudo apt-get install -y libmad0-dev
       - run: python -m pip install --upgrade pip
       - run: python -m pip install build
-      - run: python -m build --sdist --wheel --outdir dist/
+      - run: python -m build --sdist --outdir dist/
       - uses: actions/upload-artifact@v1
         with:
           name: dist
@@ -32,14 +32,17 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@v3
+      - uses: actions/download-artifact@v3
+        with:
+          name: dist
+          path: dist
       - uses: softprops/action-gh-release@v1
         # Only on a tag
         if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
         with:
           generate_release_notes: true
           files: |
-            dist/*.tar.gz
-            dist/*.whl
+            dist/*
 
   publish:
     needs: [build, release]
